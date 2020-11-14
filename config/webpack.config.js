@@ -194,7 +194,7 @@ module.exports = function (webpackEnv) {
       // There will be one main bundle, and one file per asynchronous chunk.
       // In development, it does not produce real files.
       filename: isEnvProduction
-        ? 'js/app.js'
+        ? 'app.js'
         : isEnvDevelopment && 'js/bundle.js',
       // TODO: remove this when upgrading to webpack 5
       futureEmitAssets: true,
@@ -351,7 +351,7 @@ module.exports = function (webpackEnv) {
               options: {
                 limit: imageInlineSizeLimit,
                 mimetype: 'image/avif',
-                name: 'media/[name].[hash:2].[ext]',
+                name: '[name].[hash:2].[ext]',
               },
             },
             // "url" loader works like "file" loader except that it embeds assets
@@ -362,7 +362,7 @@ module.exports = function (webpackEnv) {
               loader: require.resolve('url-loader'),
               options: {
                 limit: imageInlineSizeLimit,
-                name: 'media/[name].[hash:2].[ext]',
+                name: '[name].[hash:2].[ext]',
               },
             },
             // Process application JS with Babel.
@@ -515,7 +515,7 @@ module.exports = function (webpackEnv) {
               // by webpacks internal loaders.
               exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
               options: {
-                name: 'media/[name].[hash:2].[ext]',
+                name: '[name].[hash:2].[ext]',
               },
             },
             // ** STOP ** Are you adding a new loader?
@@ -597,7 +597,7 @@ module.exports = function (webpackEnv) {
         new MiniCssExtractPlugin({
           // Options similar to the same options in webpackOptions.output
           // both options are optional
-          filename: 'css/app.css'
+          filename: 'app.css'
         }),
       // Generate an asset manifest file with the following content:
       // - "files" key: Mapping of all asset filenames to their corresponding
