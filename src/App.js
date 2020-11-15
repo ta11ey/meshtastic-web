@@ -82,62 +82,33 @@ class App extends Component  {
   
     .catch(error => { 
       this.setState({
-        messages:[...this.state.messages,{ 
-          "from": 476493744, 
-          "to": 4294967295, 
-          "decoded": { 
-            "position": { 
-              "batteryLevel": 34, 
-              "time": 1605396101 
-            } 
-          }, 
-          "id": 1202052095, 
-          "rxSnr": 10.75, 
-          "rxTime": 1605395146, 
-          "hopLimit": 3 
-        },
-        { 
-          "from": 476493745, 
-          "to": 4294967295, 
-          "decoded": { 
-            "position": { 
-              "batteryLevel": 34, 
-              "time": 1605396101 
-            } 
-          }, 
-          "id": 1202052094, 
-          "rxSnr": 10.75, 
-          "rxTime": 1605395146, 
-          "hopLimit": 3 
-        },
-        { 
-          "from": 476493745, 
-          "to": 4294967295, 
-          "decoded": { 
-            "position": { 
-              "batteryLevel": 34, 
-              "time": 1605396101 
-            } 
-          }, 
-          "id": 1202052095, 
-          "rxSnr": 10.75, 
-          "rxTime": 1605395146, 
-          "hopLimit": 3 
-        },
-        { 
-          "from": 476493744, 
-          "to": 4294967295, 
-          "decoded": { 
-            "position": { 
-              "batteryLevel": 34, 
-              "time": 1605396101 
-            } 
-          }, 
-          "id": 1202052095, 
-          "rxSnr": 10.75, 
-          "rxTime": 1605395146, 
-          "hopLimit": 3 
-        }]
+        messages:[...this.state.messages,{
+          "from":476491748,
+          "to":4294967295,
+          "decoded": {
+            "data": {
+              "typ":"CLEAR_TEXT",
+              "payload":"aGV5b29vbw=="
+            }
+          },
+          "id":3698181789,
+          "rxSnr":11,
+          "rxTime":160540164,
+          "hopLimit":1},
+          {
+            "from":476493745,
+            "to":4294967294,
+            "decoded": {
+              "data": {
+                "typ":"CLEAR_TEXT",
+                "payload":"aGV5b29vbw=="
+              }
+            },
+            "id":3698181789,
+            "rxSnr":11,
+            "rxTime":1605401643,
+            "hopLimit":1}
+        ]
       })
       console.log(error); });
   }
