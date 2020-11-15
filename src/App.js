@@ -7,6 +7,7 @@ import PacketLog from './components/PacketLog';
 import SampleData from './SampleData';
 class App extends Component  {
 
+  httpconn
 
   constructor(props) {
     super(props);
@@ -14,6 +15,7 @@ class App extends Component  {
     this.addToMessageArray = this.addToMessageArray.bind(this);
     this.addToPacketArray = this. addToPacketArray.bind(this);
     this.changeView = this.changeView.bind(this);
+    this.SendMessage = this.SendMessage.bind(this);
     this.state = {
       messages: [],
       meshRadios: [],
@@ -41,48 +43,56 @@ class App extends Component  {
     });
   }
 
+  SendMessage(message,callback) {
+    if (this.httpconn.isConnected) {
+      var send = this.httpconn.sendText(message);
+      console.log(send);
+    }
+    callback();
+  }
+
   setupHTTP() { 
     const client = new Client();
-    const httpconn =client.createHTTPConnection();
+    this.httpconn = client.createHTTPConnection();
   
     // Set connection params
     let sslActive;
     if (window.location.protocol === 'https:') {
         sslActive = true;
     } else {
-        sslActive = false;
+        sslActive = false; 
     }
     let deviceIp = window.location.hostname; // Your devices IP here
   
   
-    httpconn.addEventListener("fromRadio", (event) => {
+    this.httpconn.addEventListener("fromRadio", (event) => {
       console.log("Radio: " + JSON.stringify(event.detail));
       this.addToPacketArray(event.detail);
     });
   
-    httpconn.addEventListener("dataPacket", (event) => {
+    this.httpconn.addEventListener("dataPacket", (event) => {
       console.log("Data: " + JSON.stringify(event.detail));
       this.addToMessageArray(event.detail);
     });
   
-    httpconn.addEventListener("userPacket", (event) => {
+    this.httpconn.addEventListener("userPacket", (event) => {
       console.log("User: " + JSON.stringify(event.detail));
       this.addToPacketArray(event.detail);
     });
   
   
-    httpconn.addEventListener("positionPacket", (event) => {
+    this.httpconn.addEventListener("positionPacket", (event) => {
       console.log("Position: " + JSON.stringify(event.detail));
       this.addToPacketArray(event.detail);
     });
   
   
-    httpconn.addEventListener("nodeListChanged", (event) => {
+    this.httpconn.addEventListener("nodeListChanged", (event) => {
       console.log("NodeList: " + JSON.stringify(event.detail));
       this.addToPacketArray(event.detail);
     });
   
-    httpconn.connect(deviceIp, sslActive)
+    this.httpconn.connect(deviceIp, sslActive)
     .then(result => {
         // console - show some kind of radio status here.
     })
@@ -90,9 +100,9 @@ class App extends Component  {
   
         // This gets called when the message has been sucessfully sent
         console.log('Message sent!');
-    })
-  
+    }) 
     .catch(error => { 
+      this.httpconn.isConnected = false;
       this.setState({
         messages: SampleData.messages
       })
@@ -101,7 +111,7 @@ class App extends Component  {
 
   AppBody() {
     if (this.state.currentView === "messages" ) {
-      return ( <Messages messages={this.state.messages} /> ); 
+      return ( <Messages messages={this.state.messages} SendMessage={this.SendMessage} /> ); 
     }
     else if(this.state.currentView === "packet_log" ) {
       return ( <PacketLog packets = {this.state.packets} /> )
