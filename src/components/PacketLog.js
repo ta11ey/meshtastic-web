@@ -12,7 +12,7 @@ class PacketLog extends Component  {
           Packets:
           {this.props.packets.map((value, index)  =>
             <div>
-              {value}<br />
+              {JSON.stringify(value)}<br />
             </div>
           )}
         </div>
