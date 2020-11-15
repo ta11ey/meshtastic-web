@@ -12,83 +12,7 @@ class App extends Component  {
     this.setupHTTP();
     this.addToMessageArray = this.addToMessageArray.bind(this);
     this.state = {
-      messages: [
-        { "packet": 
-          { 
-            "from": 476493745, 
-            "to": 4294967295, 
-            "decoded": { 
-              "position": { 
-                "batteryLevel": 34, 
-                "time": 1605396101 
-              } 
-            }, 
-            "id": 1202052095, 
-            "rxSnr": 10.75, 
-            "rxTime": 1605395146, 
-            "hopLimit": 3 }
-        },
-        { "packet": 
-          { 
-            "from": 476493744, 
-            "to": 4294967295, 
-            "decoded": { 
-              "position": { 
-                "batteryLevel": 34, 
-                "time": 1605396101 
-              } 
-            }, 
-            "id": 1202052095, 
-            "rxSnr": 10.75, 
-            "rxTime": 1605395146, 
-            "hopLimit": 3 }
-        },
-        { "packet": 
-          { 
-            "from": 476493744, 
-            "to": 4294967295, 
-            "decoded": { 
-              "position": { 
-                "batteryLevel": 34, 
-                "time": 1605396101 
-              } 
-            }, 
-            "id": 1202052095, 
-            "rxSnr": 10.75, 
-            "rxTime": 1605395146, 
-            "hopLimit": 3 }
-        },
-        { "packet": 
-          { 
-            "from": 476493744, 
-            "to": 4294967295, 
-            "decoded": { 
-              "position": { 
-                "batteryLevel": 34, 
-                "time": 1605396101 
-              } 
-            }, 
-            "id": 1202052095, 
-            "rxSnr": 10.75, 
-            "rxTime": 1605395146, 
-            "hopLimit": 3 }
-        },
-        { "packet": 
-          { 
-            "from": 476493744, 
-            "to": 4294967295, 
-            "decoded": { 
-              "position": { 
-                "batteryLevel": 34, 
-                "time": 1605396101 
-              } 
-            }, 
-            "id": 1202052095, 
-            "rxSnr": 10.75, 
-            "rxTime": 1605395146, 
-            "hopLimit": 3 }
-        }
-        ],
+      messages: [],
       meshRadios: []
     };
     
@@ -156,7 +80,66 @@ class App extends Component  {
         console.log('Message sent!');
     })
   
-    .catch(error => { console.log(error); });
+    .catch(error => { 
+      this.setState({
+        messages:[...this.state.messages,{ 
+          "from": 476493744, 
+          "to": 4294967295, 
+          "decoded": { 
+            "position": { 
+              "batteryLevel": 34, 
+              "time": 1605396101 
+            } 
+          }, 
+          "id": 1202052095, 
+          "rxSnr": 10.75, 
+          "rxTime": 1605395146, 
+          "hopLimit": 3 
+        },
+        { 
+          "from": 476493745, 
+          "to": 4294967295, 
+          "decoded": { 
+            "position": { 
+              "batteryLevel": 34, 
+              "time": 1605396101 
+            } 
+          }, 
+          "id": 1202052094, 
+          "rxSnr": 10.75, 
+          "rxTime": 1605395146, 
+          "hopLimit": 3 
+        },
+        { 
+          "from": 476493745, 
+          "to": 4294967295, 
+          "decoded": { 
+            "position": { 
+              "batteryLevel": 34, 
+              "time": 1605396101 
+            } 
+          }, 
+          "id": 1202052095, 
+          "rxSnr": 10.75, 
+          "rxTime": 1605395146, 
+          "hopLimit": 3 
+        },
+        { 
+          "from": 476493744, 
+          "to": 4294967295, 
+          "decoded": { 
+            "position": { 
+              "batteryLevel": 34, 
+              "time": 1605396101 
+            } 
+          }, 
+          "id": 1202052095, 
+          "rxSnr": 10.75, 
+          "rxTime": 1605395146, 
+          "hopLimit": 3 
+        }]
+      })
+      console.log(error); });
   }
 
   render() { 
