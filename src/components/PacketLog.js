@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Message from './message';
 import './messages.css';
 
 class PacketLog extends Component  {

@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import Message from './message';
 import './messages.css';
-import {
-  httpcon
-} from '@meshtastic/meshtasticjs'
 
 class Messages extends Component  {
 
@@ -35,7 +32,6 @@ class Messages extends Component  {
   }
 
   render() {
-    console.log(this.props.messages); 
     return (
       <div className="Messages">
         <div className="MessageHistory">
