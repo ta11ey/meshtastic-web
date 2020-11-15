@@ -18,14 +18,22 @@ class App extends Component  {
     this.changeView = this.changeView.bind(this);
     this.SendMessage = this.SendMessage.bind(this);
     this.SetHTTPStatus = this.SetHTTPStatus.bind(this);
+    this.SetRadioStatus = this.SetRadioStatus.bind(this);
+    this.SetConnectionStatus = this.SetConnectionStatus.bind(this);
+
+    const now = new Date();
     this.state = {
       messages: [],
       meshRadios: [],
       packets: [],
       currentView: "messages",
-      httpConnectionStatus: {},
-      lastLoRaMessage: "",
-
+      httpConnectionStatus: {
+        interaction_time: now
+      },
+      radioPacketStatus: {
+        interaction_time: now.getTime()
+      },
+      radioIsConnected: false,
     };
 
     
@@ -62,7 +70,18 @@ class App extends Component  {
       httpConnectionStatus: status
     });
   }
+  
+  SetRadioStatus(status) {
+    this.setState({
+      radioPacketStatus: status
+    })
+  }
 
+  SetConnectionStatus(status) {
+    this.setState({
+      radioIsConnected: status
+    })
+  }
   setupHTTP() { 
     const client = new Client();
     this.httpconn = client.createHTTPConnection();
@@ -78,6 +97,20 @@ class App extends Component  {
     let deviceIp = window.location.hostname + ":" + window.location.port; // Your devices IP here
   
 
+    this.httpconn.addEventListener("connected", (event) => {
+      console.log(event);
+      this.SetConnectionStatus(true);
+      console.log("connected To Radio");
+     
+    });
+
+
+    this.httpconn.addEventListener("disconnected", (event) => {
+      console.log("disconnected from Radio" );
+      this.SetConnectionStatus(false);
+    });
+
+
     this.httpconn.addEventListener("httpConnectionStatus", (event) => {
       console.log("HttpConnectionStatus: " + JSON.stringify(event.detail));
       this.SetHTTPStatus(event.detail);
@@ -88,7 +121,10 @@ class App extends Component  {
     this.httpconn.addEventListener("fromRadio", (event) => {
       console.log("Radio: " + JSON.stringify(event.detail));
       this.addToPacketArray(event.detail);
-      
+      const now = new Date();
+      this.SetRadioStatus({
+        interaction_time: (now.getTime())
+      });
     });
   
     this.httpconn.addEventListener("dataPacket", (event) => {
@@ -152,7 +188,7 @@ class App extends Component  {
             <Sidebar changeView={this.changeView} />
           </div>
           <div className="App-Footer"> 
-            <HTTPStatus HTTPStatus={this.state.httpConnectionStatus} />
+            <HTTPStatus RadioIsConnected={this.state.radioIsConnected} HTTPStatus={this.state.httpConnectionStatus} RadioStatus={this.state.radioPacketStatus}/>
           </div>
        
       </div>
