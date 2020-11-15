@@ -1,20 +1,25 @@
-import React, { Component } from 'react';
-import './App.css';
-import Sidebar from './sidebar';
-import Messages from './components/messages';
-import {Client, IHTTPConnection,NodeDB,SettingsManager, version} from '@meshtastic/meshtasticjs'
-import PacketLog from './components/PacketLog';
-import SampleData from './SampleData';
-import HTTPStatus from './components/httpstatus';
-class App extends Component  {
-
-  httpconn
+import React, { Component } from "react";
+import "./App.css";
+import Sidebar from "./sidebar";
+import Messages from "./components/messages";
+import {
+  Client,
+  IHTTPConnection,
+  NodeDB,
+  SettingsManager,
+  version,
+} from "@meshtastic/meshtasticjs";
+import PacketLog from "./components/PacketLog";
+import SampleData from "./SampleData";
+import HTTPStatus from "./components/httpstatus";
+class App extends Component {
+  httpconn;
 
   constructor(props) {
     super(props);
     this.setupHTTP();
     this.addToMessageArray = this.addToMessageArray.bind(this);
-    this.addToPacketArray = this. addToPacketArray.bind(this);
+    this.addToPacketArray = this.addToPacketArray.bind(this);
     this.changeView = this.changeView.bind(this);
     this.SendMessage = this.SendMessage.bind(this);
     this.SetHTTPStatus = this.SetHTTPStatus.bind(this);
@@ -28,36 +33,34 @@ class App extends Component  {
       packets: [],
       currentView: "messages",
       httpConnectionStatus: {
-        interaction_time: now
+        interaction_time: now,
       },
       radioPacketStatus: {
-        interaction_time: now.getTime()
+        interaction_time: now.getTime(),
       },
       radioIsConnected: false,
     };
-
-    
   }
 
   addToMessageArray(newmessage) {
     this.setState({
-      messages: [...this.state.messages,newmessage]
+      messages: [...this.state.messages, newmessage],
     });
   }
 
   addToPacketArray(newPacket) {
     this.setState({
-      packets: [...this.state.packets,newPacket]
+      packets: [...this.state.packets, newPacket],
     });
   }
 
   changeView(newView) {
     this.setState({
-      currentView: newView
+      currentView: newView,
     });
   }
 
-  SendMessage(message,callback) {
+  SendMessage(message, callback) {
     if (this.httpconn.isConnected) {
       var send = this.httpconn.sendText(message);
       console.log(send);
@@ -67,130 +70,128 @@ class App extends Component  {
 
   SetHTTPStatus(status) {
     this.setState({
-      httpConnectionStatus: status
+      httpConnectionStatus: status,
     });
   }
-  
+
   SetRadioStatus(status) {
     this.setState({
-      radioPacketStatus: status
-    })
+      radioPacketStatus: status,
+    });
   }
 
   SetConnectionStatus(status) {
     this.setState({
-      radioIsConnected: status
-    })
+      radioIsConnected: status,
+    });
   }
-  setupHTTP() { 
+  setupHTTP() {
     const client = new Client();
     this.httpconn = client.createHTTPConnection();
-  
+
     // Set connection params
     let sslActive;
-    if (window.location.protocol === 'https:') {
-        sslActive = true;
+    if (window.location.protocol === "https:") {
+      sslActive = true;
     } else {
-        sslActive = false; 
+      sslActive = false;
     }
-    
+
     let deviceIp = window.location.hostname + ":" + window.location.port; // Your devices IP here
-  
 
     this.httpconn.addEventListener("connected", (event) => {
       console.log(event);
       this.SetConnectionStatus(true);
       console.log("connected To Radio");
-     
     });
-
 
     this.httpconn.addEventListener("disconnected", (event) => {
-      console.log("disconnected from Radio" );
+      console.log("disconnected from Radio");
       this.SetConnectionStatus(false);
     });
-
 
     this.httpconn.addEventListener("httpConnectionStatus", (event) => {
       console.log("HttpConnectionStatus: " + JSON.stringify(event.detail));
       this.SetHTTPStatus(event.detail);
     });
-   
 
-  
     this.httpconn.addEventListener("fromRadio", (event) => {
       console.log("Radio: " + JSON.stringify(event.detail));
       this.addToPacketArray(event.detail);
       const now = new Date();
       this.SetRadioStatus({
-        interaction_time: (now.getTime())
+        interaction_time: now.getTime(),
       });
     });
-  
+
     this.httpconn.addEventListener("dataPacket", (event) => {
       console.log("Data: " + JSON.stringify(event.detail));
       this.addToMessageArray(event.detail);
     });
-  
+
     this.httpconn.addEventListener("userPacket", (event) => {
       console.log("User: " + JSON.stringify(event.detail));
       this.addToPacketArray(event.detail);
     });
-  
-  
+
     this.httpconn.addEventListener("positionPacket", (event) => {
       console.log("Position: " + JSON.stringify(event.detail));
       this.addToPacketArray(event.detail);
     });
-  
-  
+
     this.httpconn.addEventListener("nodeListChanged", (event) => {
       console.log("NodeList: " + JSON.stringify(event.detail));
       this.addToPacketArray(event.detail);
     });
-  
-    this.httpconn.connect(deviceIp, sslActive)
-    .then(result => {
+
+    this.httpconn
+      .connect(deviceIp, sslActive)
+      .then((result) => {
         // console - show some kind of radio status here.
-    })
-    .then(result => {
-  
+      })
+      .then((result) => {
         // This gets called when the message has been sucessfully sent
-        console.log('Message sent!');
-    }) 
-    .catch(error => { 
-      this.httpconn.isConnected = false;
-      //this.setState({
-       // messages: SampleData.messages
-      //})
-      console.log(error); });
+        console.log("Message sent!");
+      })
+      .catch((error) => {
+        this.httpconn.isConnected = false;
+        //this.setState({
+        // messages: SampleData.messages
+        //})
+        console.log(error);
+      });
   }
 
   AppBody() {
-    if (this.state.currentView === "messages" ) {
-      return ( <Messages messages={this.state.messages} SendMessage={this.SendMessage} /> ); 
-    }
-    else if(this.state.currentView === "packet_log" ) {
-      return ( <PacketLog packets = {this.state.packets} /> )
+    if (this.state.currentView === "messages") {
+      return (
+        <Messages
+          messages={this.state.messages}
+          SendMessage={this.SendMessage}
+        />
+      );
+    } else if (this.state.currentView === "packet_log") {
+      return <PacketLog packets={this.state.packets} />;
     }
   }
 
-  render() { 
+  render() {
     return (
       <div className="App">
-         <div className="App-header">
-            <h2>Meshtastic</h2>
-          </div>
-          <div className="App-Body" >
-            { this.AppBody() }
-          </div>
-          <div className="SidebarDiv">
-            <Sidebar changeView={this.changeView} />
-          </div>
-          <div className="App-Footer"> 
-            <HTTPStatus RadioIsConnected={this.state.radioIsConnected} HTTPStatus={this.state.httpConnectionStatus} RadioStatus={this.state.radioPacketStatus}/>
-          </div>
-       
+        <div className="App-header">
+          <h2>Meshtastic</h2>
+        </div>
+        <div className="App-Body">{this.AppBody()}</div>
+        <div className="SidebarDiv">
+          <Sidebar changeView={this.changeView} />
+        </div>
+        <div className="App-Footer">
+          <HTTPStatus
+            RadioIsConnected={this.state.radioIsConnected}
+            HTTPStatus={this.state.httpConnectionStatus}
+            RadioStatus={this.state.radioPacketStatus}
+          />
+        </div>
       </div>
     );
   }
