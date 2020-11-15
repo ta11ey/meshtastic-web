@@ -1,17 +1,97 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Sidebar from './sidebar';
+import Messages from './components/messages';
 import {Client, IHTTPConnection,NodeDB,SettingsManager, version} from '@meshtastic/meshtasticjs'
 
 class App extends Component  {
 
-  state = {
-    messages: []
-  }
 
   constructor(props) {
     super(props);
     this.setupHTTP();
+    this.addToMessageArray = this.addToMessageArray.bind(this);
+    this.state = {
+      messages: [
+        { "packet": 
+          { 
+            "from": 476493745, 
+            "to": 4294967295, 
+            "decoded": { 
+              "position": { 
+                "batteryLevel": 34, 
+                "time": 1605396101 
+              } 
+            }, 
+            "id": 1202052095, 
+            "rxSnr": 10.75, 
+            "rxTime": 1605395146, 
+            "hopLimit": 3 }
+        },
+        { "packet": 
+          { 
+            "from": 476493744, 
+            "to": 4294967295, 
+            "decoded": { 
+              "position": { 
+                "batteryLevel": 34, 
+                "time": 1605396101 
+              } 
+            }, 
+            "id": 1202052095, 
+            "rxSnr": 10.75, 
+            "rxTime": 1605395146, 
+            "hopLimit": 3 }
+        },
+        { "packet": 
+          { 
+            "from": 476493744, 
+            "to": 4294967295, 
+            "decoded": { 
+              "position": { 
+                "batteryLevel": 34, 
+                "time": 1605396101 
+              } 
+            }, 
+            "id": 1202052095, 
+            "rxSnr": 10.75, 
+            "rxTime": 1605395146, 
+            "hopLimit": 3 }
+        },
+        { "packet": 
+          { 
+            "from": 476493744, 
+            "to": 4294967295, 
+            "decoded": { 
+              "position": { 
+                "batteryLevel": 34, 
+                "time": 1605396101 
+              } 
+            }, 
+            "id": 1202052095, 
+            "rxSnr": 10.75, 
+            "rxTime": 1605395146, 
+            "hopLimit": 3 }
+        },
+        { "packet": 
+          { 
+            "from": 476493744, 
+            "to": 4294967295, 
+            "decoded": { 
+              "position": { 
+                "batteryLevel": 34, 
+                "time": 1605396101 
+              } 
+            }, 
+            "id": 1202052095, 
+            "rxSnr": 10.75, 
+            "rxTime": 1605395146, 
+            "hopLimit": 3 }
+        }
+        ],
+      meshRadios: []
+    };
+    
   }
 
   addToMessageArray(newmessage) {
@@ -36,29 +116,29 @@ class App extends Component  {
   
     httpconn.addEventListener("fromRadio", (event) => {
       console.log(JSON.stringify(event.detail));
-      this.addToMessageArray(event.detail);
+      this.addToMessageArray(JSON.stringify(event.detail));
     });
   
     httpconn.addEventListener("dataPacket", (event) => {
       console.log(JSON.stringify(event.detail));
-      this.addToMessageArray(event.detail);
+      this.addToMessageArray(JSON.stringify(event.detail));
     });
   
     httpconn.addEventListener("userPacket", (event) => {
       console.log(JSON.stringify(event.detail));
-      this.addToMessageArray(event.detail);
+      this.addToMessageArray(JSON.stringify(event.detail));
     });
   
   
     httpconn.addEventListener("positionPacket", (event) => {
       console.log(JSON.stringify(event.detail));
-      this.addToMessageArray(event.detail);
+      this.addToMessageArray(JSON.stringify(event.detail));
     });
   
   
     httpconn.addEventListener("nodeListChanged", (event) => {
       console.log(JSON.stringify(event.detail));
-      this.addToMessageArray(event.detail);
+      this.addToMessageArray(JSON.stringify(event.detail));
     });
   
     httpconn.connect(deviceIp, sslActive)
@@ -82,9 +162,16 @@ class App extends Component  {
   render() { 
     return (
       <div className="App">
-        {this.state.messages.map((value, index) => {
-          <pre>{value}</pre>
-        })}
+         <div className="App-header">
+            <h2>Meshtastic</h2>
+          </div>
+          <div className="App-Body" >
+            <Messages messages={this.state.messages} />
+          </div>
+          <div className="SidebarDiv">
+            <Sidebar />
+          </div>
+       
       </div>
     );
   }
