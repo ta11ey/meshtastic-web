@@ -67,12 +67,7 @@ class App extends Component  {
   
     httpconn.connect(deviceIp, sslActive)
     .then(result => {
-  
-        alert('device has been configured')
-        // This gets called when the connection has been established
-        // -> send a message over the mesh network. If no recipient node is provided, it gets sent as a broadcast
-        return httpconn.sendText('meshtastic is awesome');
-  
+        // console - show some kind of radio status here.
     })
     .then(result => {
   
