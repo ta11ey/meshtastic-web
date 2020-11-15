@@ -1,7 +1,7 @@
 .App {
   display: grid;
   grid-template-columns: minmax(150px,200px) auto;
-  grid-template-rows: 50px auto;
+  grid-template-rows: 50px auto 30px;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
@@ -46,4 +46,11 @@
 
 .App-Body {
   overflow: hidden;
+}
+
+.App-Footer {
+  grid-row: 3;
+  grid-column: 1 / span 2;
+  background-color: #0e0e0f;
+  color: white;
 }

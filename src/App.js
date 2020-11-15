@@ -5,6 +5,7 @@ import Messages from './components/messages';
 import {Client, IHTTPConnection,NodeDB,SettingsManager, version} from '@meshtastic/meshtasticjs'
 import PacketLog from './components/PacketLog';
 import SampleData from './SampleData';
+import HTTPStatus from './components/httpstatus';
 class App extends Component  {
 
   httpconn
@@ -16,12 +17,17 @@ class App extends Component  {
     this.addToPacketArray = this. addToPacketArray.bind(this);
     this.changeView = this.changeView.bind(this);
     this.SendMessage = this.SendMessage.bind(this);
+    this.SetHTTPStatus = this.SetHTTPStatus.bind(this);
     this.state = {
       messages: [],
       meshRadios: [],
       packets: [],
-      currentView: "messages"
+      currentView: "messages",
+      httpConnectionStatus: {},
+      lastLoRaMessage: "",
+
     };
+
     
   }
 
@@ -51,6 +57,12 @@ class App extends Component  {
     callback();
   }
 
+  SetHTTPStatus(status) {
+    this.setState({
+      httpConnectionStatus: status
+    });
+  }
+
   setupHTTP() { 
     const client = new Client();
     this.httpconn = client.createHTTPConnection();
@@ -62,12 +74,21 @@ class App extends Component  {
     } else {
         sslActive = false; 
     }
-    let deviceIp = window.location.hostname; // Your devices IP here
+    
+    let deviceIp = window.location.hostname + ":" + window.location.port; // Your devices IP here
   
+
+    this.httpconn.addEventListener("httpConnectionStatus", (event) => {
+      console.log("HttpConnectionStatus: " + JSON.stringify(event.detail));
+      this.SetHTTPStatus(event.detail);
+    });
+   
+
   
     this.httpconn.addEventListener("fromRadio", (event) => {
       console.log("Radio: " + JSON.stringify(event.detail));
       this.addToPacketArray(event.detail);
+      
     });
   
     this.httpconn.addEventListener("dataPacket", (event) => {
@@ -103,9 +124,9 @@ class App extends Component  {
     }) 
     .catch(error => { 
       this.httpconn.isConnected = false;
-      this.setState({
-        messages: SampleData.messages
-      })
+      //this.setState({
+       // messages: SampleData.messages
+      //})
       console.log(error); });
   }
 
@@ -129,6 +150,9 @@ class App extends Component  {
           </div>
           <div className="SidebarDiv">
             <Sidebar changeView={this.changeView} />
+          </div>
+          <div className="App-Footer"> 
+            <HTTPStatus HTTPStatus={this.state.httpConnectionStatus} />
           </div>
        
       </div>
