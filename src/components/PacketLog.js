@@ -16,13 +16,6 @@ class PacketLog extends Component  {
             </div>
           )}
         </div>
-        <div className="NewMessage">
-        <label>
-            Compose Message:<br/>
-          <textarea  name="messageEntry" />
-        </label>
-        <button name="Send">Send</button>
-        </div>
       </div>
     );
   }
