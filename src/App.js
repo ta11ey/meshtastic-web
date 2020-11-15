@@ -82,7 +82,7 @@ class App extends Component  {
           "to":4294967295,
           "decoded": {
             "data": {
-              "typ":"CLEAR_TEXT",
+              "typ":1,
               "payload":"aGV5b29vbw=="
             }
           },
@@ -95,7 +95,7 @@ class App extends Component  {
             "to":4294967294,
             "decoded": {
               "data": {
-                "typ":"CLEAR_TEXT",
+                "typ":1,
                 "payload":"aGV5b29vbw=="
               }
             },
