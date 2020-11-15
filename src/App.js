@@ -39,29 +39,29 @@ class App extends Component  {
   
   
     httpconn.addEventListener("fromRadio", (event) => {
-      console.log(JSON.stringify(event.detail));
+      console.log("Radio: " + JSON.stringify(event.detail));
       //this.addToMessageArray(event.detail);
     });
   
     httpconn.addEventListener("dataPacket", (event) => {
-      console.log(JSON.stringify(event.detail));
+      console.log("Data: " + JSON.stringify(event.detail));
       this.addToMessageArray(event.detail);
     });
   
     httpconn.addEventListener("userPacket", (event) => {
-      console.log(JSON.stringify(event.detail));
+      console.log("User: " + JSON.stringify(event.detail));
       //this.addToMessageArray(event.detail);
     });
   
   
     httpconn.addEventListener("positionPacket", (event) => {
-      console.log(JSON.stringify(event.detail));
+      console.log("Position: " + JSON.stringify(event.detail));
       //this.addToMessageArray(event.detail);
     });
   
   
     httpconn.addEventListener("nodeListChanged", (event) => {
-      console.log(JSON.stringify(event.detail));
+      console.log("NodeList: " + JSON.stringify(event.detail));
       //this.addToMessageArray(event.detail);
     });
   
