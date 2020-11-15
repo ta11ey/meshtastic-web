@@ -11,7 +11,7 @@ class Messages extends Component  {
         <div className="MessageHistory">
           Messages:
           {this.props.messages.map((value, index)  =>
-            <Message message={value.packet} />
+            <Message message={value} />
           )}
         </div>
         <div className="NewMessage">
