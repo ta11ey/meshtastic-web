@@ -3,6 +3,7 @@ import './App.css';
 import Sidebar from './sidebar';
 import Messages from './components/messages';
 import {Client, IHTTPConnection,NodeDB,SettingsManager, version} from '@meshtastic/meshtasticjs'
+import PacketLog from './components/PacketLog';
 
 class App extends Component  {
 
@@ -11,9 +12,13 @@ class App extends Component  {
     super(props);
     this.setupHTTP();
     this.addToMessageArray = this.addToMessageArray.bind(this);
+    this.addToPacketArray = this. addToPacketArray.bind(this);
+    this.changeView = this.changeView.bind(this);
     this.state = {
       messages: [],
-      meshRadios: []
+      meshRadios: [],
+      packets: [],
+      currentView: "messages"
     };
     
   }
@@ -21,6 +26,18 @@ class App extends Component  {
   addToMessageArray(newmessage) {
     this.setState({
       messages: [...this.state.messages,newmessage]
+    });
+  }
+
+  addToPacketArray(newPacket) {
+    this.setState({
+      packets: [...this.state.packets,newPacket]
+    });
+  }
+
+  changeView(newView) {
+    this.setState({
+      currentView: newView
     });
   }
 
@@ -40,7 +57,7 @@ class App extends Component  {
   
     httpconn.addEventListener("fromRadio", (event) => {
       console.log("Radio: " + JSON.stringify(event.detail));
-      //this.addToMessageArray(event.detail);
+      this.addToPacketArray(event.detail);
     });
   
     httpconn.addEventListener("dataPacket", (event) => {
@@ -50,19 +67,19 @@ class App extends Component  {
   
     httpconn.addEventListener("userPacket", (event) => {
       console.log("User: " + JSON.stringify(event.detail));
-      //this.addToMessageArray(event.detail);
+      this.addToPacketArray(event.detail);
     });
   
   
     httpconn.addEventListener("positionPacket", (event) => {
       console.log("Position: " + JSON.stringify(event.detail));
-      //this.addToMessageArray(event.detail);
+      this.addToPacketArray(event.detail);
     });
   
   
     httpconn.addEventListener("nodeListChanged", (event) => {
       console.log("NodeList: " + JSON.stringify(event.detail));
-      //this.addToMessageArray(event.detail);
+      this.addToPacketArray(event.detail);
     });
   
     httpconn.connect(deviceIp, sslActive)
@@ -108,6 +125,15 @@ class App extends Component  {
       console.log(error); });
   }
 
+  AppBody() {
+    if (this.state.currentView === "messages" ) {
+      return ( <Messages messages={this.state.messages} /> ); 
+    }
+    else if(this.state.currentView === "packet_log" ) {
+      return ( <PacketLog packets = {this.state.packets} /> )
+    }
+  }
+
   render() { 
     return (
       <div className="App">
@@ -115,10 +141,10 @@ class App extends Component  {
             <h2>Meshtastic</h2>
           </div>
           <div className="App-Body" >
-            <Messages messages={this.state.messages} />
+            { this.AppBody() }
           </div>
           <div className="SidebarDiv">
-            <Sidebar />
+            <Sidebar changeView={this.changeView} />
           </div>
        
       </div>
