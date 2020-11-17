@@ -13,6 +13,9 @@ import PacketLog from "./components/PacketLog";
 import SampleData from "./SampleData";
 import HTTPStatus from "./components/httpstatus";
 import Users from './components/users';
+import Favicon from 'react-favicon';
+
+
 class App extends Component {
   httpconn;
 
@@ -189,9 +192,24 @@ class App extends Component {
     }
   }
 
+  GetFavicon() {
+    if (this.state.radioIsConnected) {
+      if (this.state.messages.length > 0 ) {
+        return 'favicon-connected-unread.ico' 
+      }
+      else{ 
+        return 'favicon-connected.ico' 
+      }
+    }
+    else {
+      return 'favicon-disconnected.ico';
+    }
+  }
+
   render() {
     return (
       <div className="App">
+        <Favicon url={this.GetFavicon()} />
         <div className="App-header">
           <h2>Meshtastic</h2>
         </div>
