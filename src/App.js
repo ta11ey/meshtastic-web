@@ -17,7 +17,6 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-    this.setupHTTP();
     this.addToMessageArray = this.addToMessageArray.bind(this);
     this.addToPacketArray = this.addToPacketArray.bind(this);
     this.changeView = this.changeView.bind(this);
@@ -40,6 +39,10 @@ class App extends Component {
       },
       radioIsConnected: false,
     };
+  }
+
+  componentDidMount() {
+    this.setupHTTP();
   }
 
   addToMessageArray(newmessage) {

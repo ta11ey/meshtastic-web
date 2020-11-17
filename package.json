@@ -2,6 +2,7 @@
   "name": "meshtastic-web",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://172.30.9.159",
   "dependencies": {
     "@babel/core": "7.12.3",
     "@meshtastic/meshtasticjs": "file:../../Meshtastic/meshtastic.js",
@@ -69,7 +70,7 @@
     "workbox-webpack-plugin": "5.1.4"
   },
   "scripts": {
-    "start": "node scripts/start.js",
+    "start": "set BROWSER=none && node scripts/start.js",
     "build": "node scripts/build.js && gzipper c --level  9 ./build/",
     "test": "node scripts/test.js"
   },
