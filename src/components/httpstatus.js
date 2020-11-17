@@ -20,6 +20,23 @@ class HTTPStatus extends Component {
     return this.props.HTTPStatus !== 200 ? "green" : "red";
   }
 
+  GetFormattedSecondsString(seconds) {
+    if (seconds < 60) {
+      return seconds+"s";
+    }
+    else if (seconds < 60*60) {
+      const minutes = Math.floor((seconds)/60)
+      const seconds_rem = Math.round((seconds - (minutes*60)))
+      return minutes +"m " + seconds_rem +"s";
+    }
+    else {
+      const hours = Math.floor(seconds/60/60)
+      const minutes = Math.round((seconds - (hours*60*60))/60)
+      const seconds_rem = Math.round((seconds - (hours*60*60) - (minutes*60)))
+      return hours + "h " + minutes +"m "+ seconds_rem +"s";
+    }
+  }
+
   componentDidMount() {
     // borrowed from: https://stackoverflow.com/questions/39426083/update-react-component-every-second
     this.interval = setInterval(() => {
@@ -41,7 +58,6 @@ class HTTPStatus extends Component {
   // do this: https://stackoverflow.com/questions/39426083/update-react-component-every-second
 
   render() {
-    console.log(this.props);
     return (
       <div>
         Connected: {this.props.RadioIsConnected ? "true" : "false"}
@@ -59,7 +75,7 @@ class HTTPStatus extends Component {
             color: this.GetTimeColor(this.state.seconds_since_http_interaction),
           }}
         >
-          {this.state.seconds_since_http_interaction}
+          {this.GetFormattedSecondsString(this.state.seconds_since_http_interaction)}
         </span>
         ) &nbsp; || &nbsp; Radio Mesh: (
         <span
@@ -67,7 +83,7 @@ class HTTPStatus extends Component {
             color: this.GetTimeColor(this.state.seconds_since_radio_packet),
           }}
         >
-          {this.state.seconds_since_radio_packet}
+          {this.GetFormattedSecondsString(this.state.seconds_since_radio_packet)}
         </span>
         )
       </div>
