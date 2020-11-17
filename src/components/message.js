@@ -31,7 +31,7 @@ class Message extends Component {
       <div
         className="Message"
         style={{
-          "background-color": this.sentByUs() ? "red" : "blue",
+          backgroundColor: this.sentByUs() ? "red" : "blue",
           color: this.sentByUs() ? "black" : "white",
           float: this.sentByUs() ? "left" : "right",
         }}
@@ -42,7 +42,7 @@ class Message extends Component {
         <div
           className="MessageBody"
           style={{
-            "text-align": this.sentByUs() ? "left" : "right",
+            textAlign: this.sentByUs() ? "left" : "right",
           }}
         >
           {this.messageBody()}

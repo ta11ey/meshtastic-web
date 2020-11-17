@@ -12,6 +12,7 @@ import {
 import PacketLog from "./components/PacketLog";
 import SampleData from "./SampleData";
 import HTTPStatus from "./components/httpstatus";
+import Users from './components/users';
 class App extends Component {
   httpconn;
 
@@ -24,6 +25,7 @@ class App extends Component {
     this.SetHTTPStatus = this.SetHTTPStatus.bind(this);
     this.SetRadioStatus = this.SetRadioStatus.bind(this);
     this.SetConnectionStatus = this.SetConnectionStatus.bind(this);
+    this.UpdateUserList = this.UpdateUserList.bind(this);
 
     const now = new Date();
     this.state = {
@@ -38,7 +40,8 @@ class App extends Component {
         interaction_time: now.getTime(),
       },
       radioIsConnected: false,
-    };
+      users: []
+    };    
   }
 
   componentDidMount() {
@@ -66,7 +69,6 @@ class App extends Component {
   SendMessage(message, callback) {
     if (this.httpconn.isConnected) {
       var send = this.httpconn.sendText(message);
-      console.log(send);
     }
     callback();
   }
@@ -88,6 +90,19 @@ class App extends Component {
       radioIsConnected: status,
     });
   }
+  UpdateUserList(UserPacket) {
+    const newUserDTO = {
+      id: UserPacket.decoded.user.id,
+      longName: UserPacket.decoded.user.longName,
+      shortName: UserPacket.decoded.user.shortName,
+      lastSeen: UserPacket.rxtime
+    }
+  
+    this.setState({
+      users: [...this.state.users,newUserDTO]
+    });
+  }
+
   setupHTTP() {
     const client = new Client();
     this.httpconn = client.createHTTPConnection();
@@ -101,9 +116,7 @@ class App extends Component {
     }
 
     let deviceIp = window.location.hostname + ":" + window.location.port; // Your devices IP here
-
     this.httpconn.addEventListener("connected", (event) => {
-      console.log(event);
       this.SetConnectionStatus(true);
       console.log("connected To Radio");
     });
@@ -114,7 +127,6 @@ class App extends Component {
     });
 
     this.httpconn.addEventListener("httpConnectionStatus", (event) => {
-      console.log("HttpConnectionStatus: " + JSON.stringify(event.detail));
       this.SetHTTPStatus(event.detail);
     });
 
@@ -135,6 +147,7 @@ class App extends Component {
     this.httpconn.addEventListener("userPacket", (event) => {
       console.log("User: " + JSON.stringify(event.detail));
       this.addToPacketArray(event.detail);
+      this.UpdateUserList(event.detail);
     });
 
     this.httpconn.addEventListener("positionPacket", (event) => {
@@ -147,21 +160,17 @@ class App extends Component {
       this.addToPacketArray(event.detail);
     });
 
+
     this.httpconn
-      .connect(deviceIp, sslActive)
+      .connect(deviceIp, sslActive,false,false,'balanced',5000)
       .then((result) => {
-        // console - show some kind of radio status here.
-      })
-      .then((result) => {
-        // This gets called when the message has been sucessfully sent
-        console.log("Message sent!");
       })
       .catch((error) => {
         this.httpconn.isConnected = false;
         //this.setState({
         // messages: SampleData.messages
         //})
-        console.log(error);
+        console.log("Error connecting: ", error);
       });
   }
 
@@ -175,6 +184,8 @@ class App extends Component {
       );
     } else if (this.state.currentView === "packet_log") {
       return <PacketLog packets={this.state.packets} />;
+    } else if (this.state.currentView == "users_list" ) {
+      return <Users users={this.state.users}/>;
     }
   }
 
