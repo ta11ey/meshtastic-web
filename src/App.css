@@ -46,6 +46,7 @@
 
 .App-Body {
   overflow: hidden;
+  background-color: lightgray;
 }
 
 .App-Footer {

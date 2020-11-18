@@ -1,5 +1,4 @@
 .DeviceSettings {
-  background-color: lightgray;
   display: grid;
   grid-template-columns: 50% 50%;
   grid-template-rows: 30vh auto;
@@ -17,6 +16,7 @@
   background-color: lightgray;
   overflow-wrap: break-word;
   border: 1px solid grey;
+  padding-left: 3px
 }
 
 .UserPreferences {
@@ -25,6 +25,7 @@
   background-color: lightgray;
   overflow-wrap: break-word;
   border: 1px solid grey;
+  padding-left: 3px
 }
 
 .ChannelSettings {
@@ -33,6 +34,7 @@
   background-color: lightgray;
   overflow-wrap: break-word;
   border: 1px solid grey;
+  padding-left: 3px
 }
 
 .SectionHeader {
