@@ -14,6 +14,7 @@ import SampleData from "./SampleData";
 import HTTPStatus from "./components/httpstatus";
 import Users from './components/users';
 import Favicon from 'react-favicon';
+import DeviceSettings from './components/DeviceSettings';
 
 
 class App extends Component {
@@ -43,7 +44,8 @@ class App extends Component {
         interaction_time: now.getTime(),
       },
       radioIsConnected: false,
-      users: []
+      users: [],
+      radioConfig: {}
     };    
   }
 
@@ -163,6 +165,14 @@ class App extends Component {
       this.addToPacketArray(event.detail);
     });
 
+    this.httpconn.addEventListener("configDone", (event) => {
+      console.log("configDone: " + JSON.stringify(event.detail));
+      this.addToPacketArray(event.detail);
+      this.setState({
+        radioConfig: event.detail
+      })
+    });
+    
 
     this.httpconn
       .connect(deviceIp, sslActive,false,false,'balanced',5000)
@@ -189,6 +199,8 @@ class App extends Component {
       return <PacketLog packets={this.state.packets} />;
     } else if (this.state.currentView == "users_list" ) {
       return <Users users={this.state.users}/>;
+    } else if (this.state.currentView == "device_settings" ) {
+      return <DeviceSettings settings={this.state.radioConfig} />;
     }
   }
 
