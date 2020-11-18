@@ -9,7 +9,10 @@ class PacketLog extends Component {
         <div className="MessageHistory">
           Packets:
           {this.props.packets.map((value, index) => (
-            <div>
+            <div style={{
+              marginTop: 10,
+              border: "1px solid black"
+            }}>
               {JSON.stringify(value)}
               <br />
             </div>
