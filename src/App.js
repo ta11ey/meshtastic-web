@@ -227,7 +227,7 @@ class App extends Component {
         </div>
         <div className="App-Body">{this.AppBody()}</div>
         <div className="SidebarDiv">
-          <Sidebar changeView={this.changeView} />
+          <Sidebar changeView={this.changeView} currentUser={this.state.radioConfig.user}/>
         </div>
         <div className="App-Footer">
           <HTTPStatus
