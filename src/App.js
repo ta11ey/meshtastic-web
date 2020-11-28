@@ -209,14 +209,14 @@ class App extends Component {
   GetFavicon() {
     if (this.state.radioIsConnected) {
       if (this.state.messages.length > 0 ) {
-        return 'favicon-connected-unread.ico' 
+        return 'fav-con-un.ico' 
       }
       else{ 
-        return 'favicon-connected.ico' 
+        return 'fav-con.ico' 
       }
     }
     else {
-      return 'favicon-disconnected.ico';
+      return 'fav-dis.ico';
     }
   }
 
