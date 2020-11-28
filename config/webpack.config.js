@@ -515,7 +515,7 @@ module.exports = function (webpackEnv) {
               // by webpacks internal loaders.
               exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
               options: {
-                name: '[name].[hash:2].[ext]',
+                name: '[name].[ext]',
               },
             },
             // ** STOP ** Are you adding a new loader?
