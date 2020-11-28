@@ -4,10 +4,7 @@ import Sidebar from "./sidebar";
 import Messages from "./components/messages";
 import {
   Client,
-  IHTTPConnection,
-  NodeDB,
   SettingsManager,
-  version,
 } from "@meshtastic/meshtasticjs";
 import PacketLog from "./components/PacketLog";
 import SampleData from "./SampleData";
@@ -19,6 +16,10 @@ import DeviceSettings from './components/DeviceSettings';
 
 class App extends Component {
   httpconn;
+
+  SubOptions = {
+    name: "Meshtastic-Web"
+  };
 
   constructor(props) {
     super(props);
@@ -110,6 +111,7 @@ class App extends Component {
 
   setupHTTP() {
     const client = new Client();
+    SettingsManager.setDebugMode(0);
     this.httpconn = client.createHTTPConnection();
 
     // Set connection params
@@ -121,57 +123,56 @@ class App extends Component {
     }
 
     let deviceIp = window.location.hostname + ":" + window.location.port; // Your devices IP here
-    this.httpconn.addEventListener("connected", (event) => {
+    this.httpconn.onConnectedEvent.subscribe((event) => {
       this.SetConnectionStatus(true);
       console.log("connected To Radio");
-    });
+    },this.SubOptions);
 
-    this.httpconn.addEventListener("disconnected", (event) => {
+    this.httpconn.onDisconnectedEvent.subscribe((event) => {
       console.log("disconnected from Radio");
       this.SetConnectionStatus(false);
-    });
-
-    this.httpconn.addEventListener("httpConnectionStatus", (event) => {
+    },this.SubOptions);
+   
+    /*this.httpconn.addEventListener("httpConnectionStatus", (event) => {
       this.SetHTTPStatus(event.detail);
-    });
+    });*/
 
-    this.httpconn.addEventListener("fromRadio", (event) => {
+    this.httpconn.onFromRadioEvent.subscribe((event) => {
       console.log("Radio: " + JSON.stringify(event.detail));
       this.addToPacketArray(event.detail);
       const now = new Date();
       this.SetRadioStatus({
         interaction_time: now.getTime(),
       });
-    });
+    },this.SubOptions);
 
-    this.httpconn.addEventListener("dataPacket", (event) => {
+    this.httpconn.onDataPacketEvent.subscribe((event,) => {
       console.log("Data: " + JSON.stringify(event.detail));
       this.addToMessageArray(event.detail);
-    });
+    },this.SubOptions);
 
-    this.httpconn.addEventListener("userPacket", (event) => {
+    this.httpconn.onUserPacketEvent.subscribe((event) => {
       console.log("User: " + JSON.stringify(event.detail));
       this.addToPacketArray(event.detail);
       this.UpdateUserList(event.detail);
-    });
+    },this.SubOptions);
 
-    this.httpconn.addEventListener("positionPacket", (event) => {
+    this.httpconn.onPositionPacketEvent.subscribe((event) => {
       console.log("Position: " + JSON.stringify(event.detail));
       this.addToPacketArray(event.detail);
-    });
+    },this.SubOptions);
 
-    this.httpconn.addEventListener("nodeListChanged", (event) => {
+    this.httpconn.onNodeListChangedEvent.subscribe((event) => {
       console.log("NodeList: " + JSON.stringify(event.detail));
       this.addToPacketArray(event.detail);
-    });
+    },this.SubOptions);
 
-    this.httpconn.addEventListener("configDone", (event) => {
-      console.log("configDone: " + JSON.stringify(event.detail));
-      this.addToPacketArray(event.detail);
+    this.httpconn.onConfigDoneEvent.subscribe((event) => {
+      this.addToPacketArray(event);
       this.setState({
-        radioConfig: event.detail
+        radioConfig: event
       })
-    });
+    },this.SubOptions);
     
 
     this.httpconn
@@ -183,7 +184,8 @@ class App extends Component {
         //this.setState({
         // messages: SampleData.messages
         //})
-        console.log("Error connecting: ", error);
+        console.log("Error connecting: ");
+        console.log(error);
       });
   }
 
@@ -218,26 +220,37 @@ class App extends Component {
     }
   }
 
+ 
+
   render() {
-    return (
-      <div className="App">
-        <Favicon url={this.GetFavicon()} />
-        <div className="App-header">
-          <h2>Meshtastic</h2>
+    if ( this.state.radioConfig ) {
+      return (
+        <div className="App">
+          <Favicon url={this.GetFavicon()} />
+          <div className="App-header">
+            <h2>Meshtastic</h2>
+          </div>
+          <div className="App-Body">{this.AppBody()}</div>
+          <div className="SidebarDiv">
+            <Sidebar changeView={this.changeView} currentUser={this.state.radioConfig.user}/>
+          </div>
+          <div className="App-Footer">
+            <HTTPStatus
+              RadioIsConnected={this.state.radioIsConnected}
+              HTTPStatus={this.state.httpConnectionStatus}
+              RadioStatus={this.state.radioPacketStatus}
+            />
+          </div>
         </div>
-        <div className="App-Body">{this.AppBody()}</div>
-        <div className="SidebarDiv">
-          <Sidebar changeView={this.changeView} currentUser={this.state.radioConfig.user}/>
+      );
+    }
+    else {
+      return (
+        <div className="App">
+          Loading...
         </div>
-        <div className="App-Footer">
-          <HTTPStatus
-            RadioIsConnected={this.state.radioIsConnected}
-            HTTPStatus={this.state.httpConnectionStatus}
-            RadioStatus={this.state.radioPacketStatus}
-          />
-        </div>
-      </div>
-    );
+      );
+    }
   }
 }
 
