@@ -8,16 +8,9 @@ class Message extends Component {
   }
 
   messageBody() {
+
     if (this.props.message.decoded.data.typ == TypeEnum.CLEAR_TEXT) {
-      if (this.props.message.decoded.data.payload instanceof Uint8Array) {
-        console.log("Decoding array");
-        var enc = new TextDecoder("utf-8");
-        return enc.decode(this.props.message.decoded.data.payload);
-      } else {
-        console.log("Decoding JSON blurb"); // this is really only for debugging
-        var b64 = this.props.message.decoded.data.payload;
-        return atob(b64);
-      }
+      return this.props.message.decoded.data.payload;
     } else {
       return "Binary data";
     }

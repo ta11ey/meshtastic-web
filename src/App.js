@@ -133,13 +133,13 @@ class App extends Component {
       this.SetConnectionStatus(false);
     },this.SubOptions);
    
-    /*this.httpconn.addEventListener("httpConnectionStatus", (event) => {
-      this.SetHTTPStatus(event.detail);
-    });*/
+    this.httpconn.onHTTPTransactionEvent.subscribe((event) => {
+      this.SetHTTPStatus(event);
+    });
 
     this.httpconn.onFromRadioEvent.subscribe((event) => {
-      console.log("Radio: " + JSON.stringify(event.detail));
-      this.addToPacketArray(event.detail);
+      console.log("Radio: " + JSON.stringify(event));
+      this.addToPacketArray(event);
       const now = new Date();
       this.SetRadioStatus({
         interaction_time: now.getTime(),
@@ -147,27 +147,28 @@ class App extends Component {
     },this.SubOptions);
 
     this.httpconn.onDataPacketEvent.subscribe((event,) => {
-      console.log("Data: " + JSON.stringify(event.detail));
-      this.addToMessageArray(event.detail);
+      console.log("Data: " + JSON.stringify(event));
+      this.addToMessageArray(event);
     },this.SubOptions);
 
     this.httpconn.onUserPacketEvent.subscribe((event) => {
-      console.log("User: " + JSON.stringify(event.detail));
-      this.addToPacketArray(event.detail);
-      this.UpdateUserList(event.detail);
+      console.log("User: " + JSON.stringify(event));
+      this.addToPacketArray(event);
+      this.UpdateUserList(event);
     },this.SubOptions);
 
     this.httpconn.onPositionPacketEvent.subscribe((event) => {
-      console.log("Position: " + JSON.stringify(event.detail));
-      this.addToPacketArray(event.detail);
+      console.log("Position: " + JSON.stringify(event));
+      this.addToPacketArray(event);
     },this.SubOptions);
 
     this.httpconn.onNodeListChangedEvent.subscribe((event) => {
-      console.log("NodeList: " + JSON.stringify(event.detail));
-      this.addToPacketArray(event.detail);
+      console.log("NodeList: " + JSON.stringify(event));
+      this.addToPacketArray(event);
     },this.SubOptions);
 
     this.httpconn.onConfigDoneEvent.subscribe((event) => {
+      
       this.addToPacketArray(event);
       this.setState({
         radioConfig: event
