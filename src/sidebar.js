@@ -24,6 +24,7 @@ class Sidebar extends Component {
           <a onClick={() => this.changeView("users_map") } ><li>Channel Users Map</li></a>
           <a onClick={() => this.changeView("device_settings") } ><li>Device Settings</li></a>
           <a onClick={() => this.changeView("packet_log") } ><li>Packet Log</li></a>
+          <a onClick={() => this.changeView("device_files") } ><li>Device Filesystem</li></a>
       </ul>
     </div>;
           
