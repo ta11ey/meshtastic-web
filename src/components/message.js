@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./message.css";
-import { TypeEnum } from "@meshtastic/meshtasticjs/dist/protobuf";
+import { PortNumEnum } from "@meshtastic/meshtasticjs/dist/protobuf";
 
 class Message extends Component {
   sentByUs() {
@@ -9,7 +9,7 @@ class Message extends Component {
 
   messageBody() {
 
-    if (this.props.message.decoded.data.typ == TypeEnum.CLEAR_TEXT) {
+    if (this.props.message.decoded.data.portnum == PortNumEnum.TEXT_MESSAGE_APP) {
       return this.props.message.decoded.data.payload;
     } else {
       return "Binary data";
