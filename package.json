@@ -2,7 +2,7 @@
   "name": "meshtastic-web",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://172.30.9.159",
+  "proxy": "http://172.30.9.165",
   "dependencies": {
     "@babel/core": "7.12.3",
     "@meshtastic/meshtasticjs": "^0.3.4",
