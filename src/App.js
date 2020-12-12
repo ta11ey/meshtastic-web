@@ -12,7 +12,7 @@ import HTTPStatus from "./components/httpstatus";
 import Users from './components/users';
 import Favicon from 'react-favicon';
 import DeviceSettings from './components/DeviceSettings';
-
+import DeviceFiles from './components/DeviceFiles';
 
 class App extends Component {
   httpconn;
@@ -204,6 +204,9 @@ class App extends Component {
       return <Users users={this.state.users}/>;
     } else if (this.state.currentView == "device_settings" ) {
       return <DeviceSettings settings={this.state.radioConfig} />;
+    }
+    else if (this.state.currentView == "device_files" ) {
+      return <DeviceFiles />
     }
   }
 
