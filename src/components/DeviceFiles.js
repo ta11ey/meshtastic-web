@@ -6,7 +6,8 @@ class DeviceFiles extends Component {
   constructor(props) {
     super(props);
     this.state ={
-      file:null
+      file:null,
+      isUploading: false
     }
     this.onFormSubmit = this.onFormSubmit.bind(this)
     this.onChange = this.onChange.bind(this)
@@ -15,9 +16,13 @@ class DeviceFiles extends Component {
 
   onFormSubmit(e){
     e.preventDefault() // Stop form submit
+    this.setState({isUploading: true})
     this.fileUpload(this.state.file).then((response)=>{
       console.log("File upload successful");
-      this.setState({file:null});
+      this.setState({
+        file:null,
+       isUploading:false
+      });
     })
   }
 
@@ -36,14 +41,23 @@ class DeviceFiles extends Component {
   }
 
   render() {
-    return (
-      <div className="DeviceFiles">
-        <form onSubmit={this.onFormSubmit}>
-          <input type="file" onChange={this.onChange} />
-          <button type="submit">Upload File</button>
-        </form>
-      </div>
-    );
+    if (this.state.isUploading) {
+      return (
+        <div className="DeviceFiles">
+          Upload in progress
+        </div>
+      );
+    }
+    else {
+      return (
+        <div className="DeviceFiles">
+          <form onSubmit={this.onFormSubmit}>
+            <input type="file" onChange={this.onChange} />
+            <button type="submit">Upload File</button>
+          </form>
+        </div>
+      );
+    }
   }
 }
 
