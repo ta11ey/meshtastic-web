@@ -183,6 +183,23 @@ class App extends Component {
     this.httpconn
       .connect(deviceIp, sslActive,false,false,'balanced',5000)
       .then((result) => {
+        if (false) {
+          console.log("Setting configs");
+          this.httpconn.setRadioConfig({
+            preferences:{
+              sendOwnerInterval: 10,
+              positionBroadcastSecs: 10,
+              waitBluetoothSecs: 86400,
+              screenOnSecs:10,
+              minWakeSecs: 1000000
+            }
+          });
+          this.httpconn.setOwner({
+            id: "1",
+            longName: "charles",
+            shortName:"cc"
+          })
+        }
       })
       .catch((error) => {
         this.httpconn.isConnected = false;
@@ -207,7 +224,7 @@ class App extends Component {
     } else if (this.state.currentView == "users_list" ) {
       return <Users users={this.state.users}/>;
     } else if (this.state.currentView == "device_settings" ) {
-      return <DeviceSettings radioConfig={this.state.radioConfig} myInfo={this.state.myInfo} />;
+      return <DeviceSettings radioConfig={this.state.radioConfig} myInfo={this.state.myInfo} httpconn={this.httpconn} />;
     }
     else if (this.state.currentView == "device_files" ) {
       return <DeviceFiles />
