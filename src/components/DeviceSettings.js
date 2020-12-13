@@ -50,8 +50,11 @@ class DeviceSettings extends Component {
   }
 
   render() {
+
+    const proto = Object.getPrototypeOf(this.state.radioConfig.preferences)
+    const availableUserPreferences =  Object.getOwnPropertyNames(proto).filter(name => typeof this.state.radioConfig.preferences[name] !== 'function' &&  name !== '$type').sort();
    
-    const prefs = Object.keys(this.state.radioConfig.preferences).map(key => 
+    const prefs = availableUserPreferences.map(key => 
       <div>
         <span className="settingLabel">{key} </span>
         <input className="settingValue" name={key} onChange={this.handlePreferenceChange} value={this.state.radioConfig.preferences[key]} /><br/>
