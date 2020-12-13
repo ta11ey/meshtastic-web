@@ -46,7 +46,9 @@ class App extends Component {
       },
       radioIsConnected: false,
       users: [],
-      radioConfig: {}
+      radioConfig: {},
+      myInfo: {},
+      user: {}
     };    
   }
 
@@ -171,7 +173,9 @@ class App extends Component {
       
       this.addToPacketArray(event);
       this.setState({
-        radioConfig: event
+        radioConfig: event.radioConfig,
+        myInfo: event.myInfo,
+        user: event.user
       })
     },this.SubOptions);
     
@@ -203,7 +207,7 @@ class App extends Component {
     } else if (this.state.currentView == "users_list" ) {
       return <Users users={this.state.users}/>;
     } else if (this.state.currentView == "device_settings" ) {
-      return <DeviceSettings settings={this.state.radioConfig} />;
+      return <DeviceSettings radioConfig={this.state.radioConfig} myInfo={this.state.myInfo} />;
     }
     else if (this.state.currentView == "device_files" ) {
       return <DeviceFiles />
@@ -227,7 +231,7 @@ class App extends Component {
  
 
   render() {
-    if ( this.state.radioConfig ) {
+    if ( this.state.user ) {
       return (
         <div className="App">
           <Favicon url={this.GetFavicon()} />
@@ -236,7 +240,7 @@ class App extends Component {
           </div>
           <div className="App-Body">{this.AppBody()}</div>
           <div className="SidebarDiv">
-            <Sidebar changeView={this.changeView} currentUser={this.state.radioConfig.user}/>
+            <Sidebar changeView={this.changeView} currentUser={this.state.user}/>
           </div>
           <div className="App-Footer">
             <HTTPStatus
