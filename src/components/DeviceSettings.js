@@ -97,9 +97,20 @@ class DeviceSettings extends Component {
           <button onClick={()=>{ fetch("/restart",{
               method:"POST"
             }); }} >Restart</button>
-          <button onClick={()=>{ fetch("/json/blink",{
-              method:"POST"
-            }); }} >Blink</button>
+          <button onClick={()=>{ 
+            var formData = new FormData();
+            formData.append("blink_target", "LED");
+            fetch("/json/blink",{
+              method:"POST",
+              body: formData
+            }); }} >Blink LED</button>
+          <button onClick={()=>{ 
+            var formData = new FormData();
+            formData.append("blink_target", "SCREEN");
+            fetch("/json/blink",{
+              method:"POST",
+              body: formData
+            }); }} >Blink Screen</button>
           {unsavedChanges}          
         </div>
         <div className="UserPreferences">
