@@ -127,6 +127,32 @@ class DeviceFiles extends Component {
     });
   }
 
+
+  filesystemUtilizationBar() {
+    const kbUsed = Math.round(this.state.filesystem.used/1000)
+    const kbFree =  Math.round(this.state.filesystem.free/1000);
+    const kbTotal = Math.round(this.state.filesystem.total/1000);
+    const pctUsed = Math.round((this.state.filesystem.used / this.state.filesystem.total)*100);
+    const pctFree = Math.round((this.state.filesystem.free / this.state.filesystem.total)*100);
+    return(
+      <div className="UtilizationDiv">
+        <div className="UtilizationUsed" style={{
+          width: pctUsed +"%"
+        }}>
+          {kbUsed}kb Used ({pctUsed}%)
+        </div>
+        <div className="UtilizationFree" style={{
+          width: pctFree+"%"
+        }}>
+          {kbFree}kb Free ({pctFree}%)
+        </div>
+        <div className="UtilizationTotal">
+          Total Size: {kbTotal}kb
+        </div>
+      </div>
+    )
+  }
+
   render() {
     if (this.state.isUploading) {
       return (
@@ -142,7 +168,7 @@ class DeviceFiles extends Component {
             <input type="file" onChange={this.onChange} />
             <button type="submit">Upload File</button>
             <pre>{JSON.stringify(this.state.files)}</pre>
-            <pre>{JSON.stringify(this.state.filesystem)}</pre>
+            
           </form>
           <div
             style={{display: 'inline-block', position: 'relative'}}
@@ -175,6 +201,7 @@ class DeviceFiles extends Component {
               }
               {this.props.children}
             </div>
+            {this.filesystemUtilizationBar()}
         </div>
       );
     }
