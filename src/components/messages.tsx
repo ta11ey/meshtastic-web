@@ -1,8 +1,9 @@
-import React, { Component } from "react";
+import * as React from "react";
+import { Component } from "react";
 import Message from "./message";
 import "./messages.css";
 
-class Messages extends Component {
+class Messages extends Component<MessagesProps,MessagesState> {
   constructor(props) {
     super(props);
     this.SendMessage = this.SendMessage.bind(this);
@@ -53,5 +54,15 @@ class Messages extends Component {
     );
   }
 }
+
+interface MessagesProps {
+  SendMessage: any,
+  messages: any
+}
+
+interface MessagesState {
+  NewMessageValue: string
+}
+
 
 export default Messages;
