@@ -8,7 +8,9 @@ class DeviceFiles extends Component {
     this.state ={
       file:null,
       isUploading: false,
-      drag: false
+      drag: false,
+      files:[],
+      filesystem:{}
     }
     this.onFormSubmit = this.onFormSubmit.bind(this)
     this.onChange = this.onChange.bind(this)
@@ -17,6 +19,7 @@ class DeviceFiles extends Component {
     this.handleDragOut = this.handleDragOut.bind(this)
     this.handleDragIn = this.handleDragIn.bind(this)
     this.handleDrag = this.handleDrag.bind(this)
+    this.refreshSPIFFSFileTree = this.refreshSPIFFSFileTree.bind(this);
   }
 
   /* 
@@ -70,6 +73,7 @@ class DeviceFiles extends Component {
     div.addEventListener('dragleave', this.handleDragOut)
     div.addEventListener('dragover', this.handleDrag)
     div.addEventListener('drop', this.handleDrop)
+    this.refreshSPIFFSFileTree()
   }
 
   componentWillUnmount() {
@@ -78,6 +82,23 @@ class DeviceFiles extends Component {
     div.removeEventListener('dragleave', this.handleDragOut)
     div.removeEventListener('dragover', this.handleDrag)
     div.removeEventListener('drop', this.handleDrop)
+  }
+
+  refreshSPIFFSFileTree() {
+    console.log("getting filetree");
+    fetch("/json/spiffs/browse/static/").then(function(response) {
+      if (response.status !== 200) {
+         // couldn't read files
+         return
+      }
+      response.json().then(function(data) {
+        console.log(data.data);
+        this.setState({
+          files: data.data.files,
+          filesystem: data.data.filesystem
+        });
+      }.bind(this));
+    }.bind(this));
   }
 
   onFormSubmit(e){
@@ -120,6 +141,8 @@ class DeviceFiles extends Component {
           <form onSubmit={this.onFormSubmit}>
             <input type="file" onChange={this.onChange} />
             <button type="submit">Upload File</button>
+            <pre>{JSON.stringify(this.state.files)}</pre>
+            <pre>{JSON.stringify(this.state.filesystem)}</pre>
           </form>
           <div
             style={{display: 'inline-block', position: 'relative'}}
