@@ -234,14 +234,14 @@ class App extends Component {
   GetFavicon() {
     if (this.state.radioIsConnected) {
       if (this.state.messages.length > 0) {
-        return 'fav-con-un.svg'
+        return '/static/fav-con-un.svg'
       }
       else {
-        return 'fav-con.svg'
+        return '/static/fav-con.svg'
       }
     }
     else {
-      return 'fav-dis.svg';
+      return '/static/fav-dis.svg';
     }
   }
 
