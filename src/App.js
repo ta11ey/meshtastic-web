@@ -233,12 +233,7 @@ class App extends Component {
 
   GetFavicon() {
     if (this.state.radioIsConnected) {
-      if (this.state.messages.length > 0) {
-        return '/static/fav-con-un.svg'
-      }
-      else {
-        return '/static/fav-con.svg'
-      }
+      return '/static/fav-con.svg'
     }
     else {
       return '/static/fav-dis.svg';
@@ -251,7 +246,7 @@ class App extends Component {
     if (this.state.user) {
       return (
         <div className="App">
-          <Favicon url={this.GetFavicon()} />
+          <Favicon url={this.GetFavicon()} alertCount={this.state.messages.length} />
           <div className="App-header">
             <h2>Meshtastic</h2>
           </div>
