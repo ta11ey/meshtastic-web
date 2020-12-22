@@ -1,9 +1,8 @@
-import React, { Component } from "react";
+import * as React from "react";
+import { Component } from "react";
 import "./DeviceSettings.css";
 
-class DeviceSettings extends Component {
-
-
+class DeviceSettings extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
 
   constructor(props) {
     super(props);
@@ -49,6 +48,17 @@ class DeviceSettings extends Component {
     });
   }
 
+  unsavedChanges() {
+    if (this.state.isDirty){
+      return (
+        <div>
+          <span>Notice: There are unsaved configuration changes</span><br/>
+          <button onClick={this.writeToRadio} disabled={!this.state.isDirty}> Save and Reboot</button>
+        </div>
+      )
+    }
+  }
+
   render() {
 
     const proto = Object.getPrototypeOf(this.state.radioConfig.preferences)
@@ -76,16 +86,6 @@ class DeviceSettings extends Component {
        </div>
     )
 
-    var unsavedChanges = "";
-    if (this.state.isDirty){
-      unsavedChanges = (
-        <div>
-          <span>Notice: There are unsaved configuration changes</span><br/>
-          <button onClick={this.writeToRadio} disabled={!this.state.isDirty}> Save and Reboot</button>
-        </div>
-      )
-    }
-
     return (
       <div className="DeviceSettings">
         <div className="DeviceProfile">
@@ -109,7 +109,7 @@ class DeviceSettings extends Component {
             fetch("/json/blink?blink_target=SCREEN",{
               method:"POST"
             }); }} >Blink Screen</button>
-          {unsavedChanges}          
+          {this.unsavedChanges()}          
         </div>
         <div className="UserPreferences">
         <span className="SectionHeader">User Preferences</span><br/>

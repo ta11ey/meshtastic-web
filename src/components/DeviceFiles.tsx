@@ -1,7 +1,8 @@
-import React, { Component } from "react";
+import * as React from "react";
+import { Component } from "react";
 import "./DeviceFiles.css";
 
-class DeviceFiles extends Component {
+class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
 
   constructor(props) {
     super(props);

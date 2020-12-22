@@ -1,20 +1,23 @@
-import React, { Component } from "react";
+import * as React from "react"
+import { Component } from "react";
 import "./App.css";
 import Sidebar from "./sidebar";
 import Messages from "./components/messages";
 import {
   Client,
+} from  "../node_modules/@meshtastic/meshtasticjs/dist/client";
+import {
   SettingsManager,
-} from "@meshtastic/meshtasticjs";
+} from  "../node_modules/@meshtastic/meshtasticjs/dist/settingsmanager";
 import PacketLog from "./components/PacketLog";
 import SampleData from "./SampleData";
 import HTTPStatus from "./components/httpstatus";
 import Users from './components/users';
-import Favicon from 'react-favicon';
+import * as Favicon from "../node_modules/react-favicon/dist/react-favicon";
 import DeviceSettings from './components/DeviceSettings';
 import DeviceFiles from './components/DeviceFiles';
 
-class App extends Component {
+class App extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
   httpconn;
 
   SubOptions = {

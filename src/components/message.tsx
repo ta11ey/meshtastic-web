@@ -1,9 +1,9 @@
 import * as React from "react";
 import { Component } from "react";
 import "./message.css";
-import { PortNumEnum } from "@meshtastic/meshtasticjs/dist/protobuf";
+import { PortNumEnum } from "../../node_modules/@meshtastic/meshtasticjs/dist/protobuf";
 
-class Message extends Component<MessageProps,{}> {
+class Message extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
   sentByUs() {
     return this.props.message.from == "476493745";
   }
@@ -54,10 +54,10 @@ class Message extends Component<MessageProps,{}> {
 interface MessageProps {
   message: {
     from: string,
-    decoded: any,
+    decoded: any, // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
     rxTime: string,
-    rxSnr: any
-    hopLimit: any
+    rxSnr: any // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
+    hopLimit: any // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
   }
 }
 
