@@ -2,7 +2,7 @@
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-columns: 100vw;
+  grid-template-columns: 100%;
   grid-template-rows: 50px auto 50px;
 }
 
