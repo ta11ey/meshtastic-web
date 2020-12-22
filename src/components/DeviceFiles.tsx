@@ -160,7 +160,7 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
   }
 
   deleteFile(filename:string) {
-    fetch("/static?delete="+filename,{
+    fetch("/json/spiffs/delete/static?delete="+filename,{
       method:"DELETE"
     }).then(()=> {
       this.refreshSPIFFSFileTree();
