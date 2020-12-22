@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Component, createRef } from "react";
 import "./DeviceFiles.css";
+import DeviceFile from "./DeviceFile";
 
 class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
 
@@ -23,6 +24,7 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
     this.handleDragIn = this.handleDragIn.bind(this)
     this.handleDrag = this.handleDrag.bind(this)
     this.refreshSPIFFSFileTree = this.refreshSPIFFSFileTree.bind(this);
+    this.deleteFile = this.deleteFile.bind(this);
   }
 
   /* 
@@ -127,6 +129,7 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
         file:null,
        isUploading:false
       });
+      this.refreshSPIFFSFileTree()
     });
   }
 
@@ -156,6 +159,14 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
     )
   }
 
+  deleteFile(filename:string) {
+    fetch("/static?delete="+filename,{
+      method:"DELETE"
+    }).then(()=> {
+      this.refreshSPIFFSFileTree();
+    })
+  }
+
   render() {
     if (this.state.isUploading) {
       return (
@@ -170,7 +181,11 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
           <form onSubmit={this.onFormSubmit}>
             <input type="file" onChange={this.onChange} />
             <button type="submit">Upload File</button>
-            <pre>{JSON.stringify(this.state.files)}</pre>
+            <div className="FileBrowser">
+              {this.state.files.map((value, index) => (
+                <DeviceFile name={value.name} size={value.size}  delete={this.deleteFile}/>
+              ))}
+            </div>
             
           </form>
           <div
