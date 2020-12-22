@@ -1,20 +1,23 @@
-import React, { Component } from "react";
+import * as React from "react"
+import { Component } from "react";
 import "./App.css";
 import Sidebar from "./sidebar";
 import Messages from "./components/messages";
 import {
   Client,
+} from  "../node_modules/@meshtastic/meshtasticjs/dist/client";
+import {
   SettingsManager,
-} from "@meshtastic/meshtasticjs";
+} from  "../node_modules/@meshtastic/meshtasticjs/dist/settingsmanager";
 import PacketLog from "./components/PacketLog";
 import SampleData from "./SampleData";
 import HTTPStatus from "./components/httpstatus";
 import Users from './components/users';
-import Favicon from 'react-favicon';
+import * as Favicon from "../node_modules/react-favicon/dist/react-favicon";
 import DeviceSettings from './components/DeviceSettings';
 import DeviceFiles from './components/DeviceFiles';
 
-class App extends Component {
+class App extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
   httpconn;
 
   SubOptions = {
@@ -49,7 +52,7 @@ class App extends Component {
       radioConfig: {},
       myInfo: {},
       user: {}
-    };    
+    };
   }
 
   componentDidMount() {
@@ -105,9 +108,9 @@ class App extends Component {
       shortName: UserPacket.decoded.user.shortName,
       lastSeen: UserPacket.rxtime
     }
-  
+
     this.setState({
-      users: [...this.state.users,newUserDTO]
+      users: [...this.state.users, newUserDTO]
     });
   }
 
@@ -128,13 +131,13 @@ class App extends Component {
     this.httpconn.onConnectedEvent.subscribe((event) => {
       this.SetConnectionStatus(true);
       console.log("connected To Radio");
-    },this.SubOptions);
+    }, this.SubOptions);
 
     this.httpconn.onDisconnectedEvent.subscribe((event) => {
       console.log("disconnected from Radio");
       this.SetConnectionStatus(false);
-    },this.SubOptions);
-   
+    }, this.SubOptions);
+
     this.httpconn.onHTTPTransactionEvent.subscribe((event) => {
       this.SetHTTPStatus(event);
     });
@@ -146,58 +149,58 @@ class App extends Component {
       this.SetRadioStatus({
         interaction_time: now.getTime(),
       });
-    },this.SubOptions);
+    }, this.SubOptions);
 
     this.httpconn.onDataPacketEvent.subscribe((event,) => {
       console.log("Data: " + JSON.stringify(event));
       this.addToMessageArray(event);
-    },this.SubOptions);
+    }, this.SubOptions);
 
     this.httpconn.onUserPacketEvent.subscribe((event) => {
       console.log("User: " + JSON.stringify(event));
       this.addToPacketArray(event);
       this.UpdateUserList(event);
-    },this.SubOptions);
+    }, this.SubOptions);
 
     this.httpconn.onPositionPacketEvent.subscribe((event) => {
       console.log("Position: " + JSON.stringify(event));
       this.addToPacketArray(event);
-    },this.SubOptions);
+    }, this.SubOptions);
 
     this.httpconn.onNodeListChangedEvent.subscribe((event) => {
       console.log("NodeList: " + JSON.stringify(event));
       this.addToPacketArray(event);
-    },this.SubOptions);
+    }, this.SubOptions);
 
     this.httpconn.onConfigDoneEvent.subscribe((event) => {
-      
+
       this.addToPacketArray(event);
       this.setState({
         radioConfig: event.radioConfig,
         myInfo: event.myInfo,
         user: event.user
       })
-    },this.SubOptions);
-    
+    }, this.SubOptions);
+
 
     this.httpconn
-      .connect(deviceIp, sslActive,false,false,'balanced',5000)
+      .connect(deviceIp, sslActive, false, false, 'balanced', 5000)
       .then((result) => {
         if (false) {
           console.log("Setting configs");
           this.httpconn.setRadioConfig({
-            preferences:{
+            preferences: {
               sendOwnerInterval: 10,
               positionBroadcastSecs: 10,
               waitBluetoothSecs: 86400,
-              screenOnSecs:10,
+              screenOnSecs: 10,
               minWakeSecs: 1000000
             }
           });
           this.httpconn.setOwner({
             id: "1",
             longName: "charles",
-            shortName:"cc"
+            shortName: "cc"
           })
         }
       })
@@ -221,43 +224,38 @@ class App extends Component {
       );
     } else if (this.state.currentView === "packet_log") {
       return <PacketLog packets={this.state.packets} />;
-    } else if (this.state.currentView == "users_list" ) {
-      return <Users users={this.state.users}/>;
-    } else if (this.state.currentView == "device_settings" ) {
+    } else if (this.state.currentView == "users_list") {
+      return <Users users={this.state.users} />;
+    } else if (this.state.currentView == "device_settings") {
       return <DeviceSettings radioConfig={this.state.radioConfig} myInfo={this.state.myInfo} httpconn={this.httpconn} />;
     }
-    else if (this.state.currentView == "device_files" ) {
+    else if (this.state.currentView == "device_files") {
       return <DeviceFiles />
     }
   }
 
   GetFavicon() {
     if (this.state.radioIsConnected) {
-      if (this.state.messages.length > 0 ) {
-        return '/static/fav-con-un.ico' 
-      }
-      else{ 
-        return '/static/fav-con.ico' 
-      }
+      return '/static/fav-con.svg'
     }
     else {
-      return '/static/fav-dis.ico';
+      return '/static/fav-dis.svg';
     }
   }
 
- 
+
 
   render() {
-    if ( this.state.user ) {
+    if (this.state.user) {
       return (
         <div className="App">
-          <Favicon url={this.GetFavicon()} />
+          <Favicon url={this.GetFavicon()} alertCount={this.state.messages.length} />
           <div className="App-header">
             <h2>Meshtastic</h2>
           </div>
           <div className="App-Body">{this.AppBody()}</div>
           <div className="SidebarDiv">
-            <Sidebar changeView={this.changeView} currentUser={this.state.user}/>
+            <Sidebar changeView={this.changeView} currentUser={this.state.user} />
           </div>
           <div className="App-Footer">
             <HTTPStatus

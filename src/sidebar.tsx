@@ -1,7 +1,8 @@
-import React, { Component } from "react";
+import * as React from "react";
+import { Component } from "react";
 import './sidebar.css';
 
-class Sidebar extends Component {
+class Sidebar extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
 
   changeView(newView) {
     console.log(newView);

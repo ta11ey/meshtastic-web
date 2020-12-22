@@ -1,6 +1,9 @@
-import React, { Component } from "react";
+import * as React from "react";
+import { Component } from "react";
 
-class HTTPStatus extends Component {
+class HTTPStatus extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
+  interval;
+
   state = {
     seconds_since_http_interaction: "",
     seconds_since_radio_packet: "",
@@ -40,7 +43,7 @@ class HTTPStatus extends Component {
   componentDidMount() {
     // borrowed from: https://stackoverflow.com/questions/39426083/update-react-component-every-second
     this.interval = setInterval(() => {
-      const now = new Date();
+      const now:any = new Date(); // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
       this.setState({
         seconds_since_http_interaction: Math.trunc(
           (now - this.props.HTTPStatus.interaction_time) / 1000

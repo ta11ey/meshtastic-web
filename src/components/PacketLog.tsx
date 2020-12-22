@@ -1,7 +1,8 @@
-import React, { Component } from "react";
+import * as React from "react";
+import { Component } from "react";
 import "./messages.css";
 
-class PacketLog extends Component {
+class PacketLog extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
   // TODO: This shouldn't be necessary
   // but for some reason, packets from meshtastic.js throw
   // an exception when stringifying them
