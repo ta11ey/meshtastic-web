@@ -42,11 +42,12 @@
 
 .FileBrowser {
   display: grid;
-  grid-auto-rows: 2em;
-  grid-template-columns: 100vw;
-  grid-template-rows: 50px auto 50px;
-  height: 30vh;
+  grid-auto-rows: 50px;
+  grid-template-columns: 100%;
   width: 100%;
+  height: 100%;
+  gap: 10px;
+  overflow-y: scroll;
 }
 
 .FileBrowser .DeviceFile div {
