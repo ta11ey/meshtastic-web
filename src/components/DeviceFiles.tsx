@@ -1,8 +1,10 @@
 import * as React from "react";
-import { Component } from "react";
+import { Component, createRef } from "react";
 import "./DeviceFiles.css";
 
 class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
+
+  dragCounter;
 
   constructor(props) {
     super(props);
@@ -28,7 +30,7 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
     and from https://www.smashingmagazine.com/2020/02/html-drag-drop-api-react/
   */
  
-  dropRef = React.createRef()
+  dropRef = React.createRef<HTMLDivElement>() //Found help on this from: https://medium.com/@martin_hotell/react-refs-with-typescript-a32d56c4d315
 
   handleDrag = (e) => {
     e.preventDefault()
@@ -69,7 +71,7 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
   }
 
   componentDidMount() {
-    let div = this.dropRef.current
+    let div:any = this.dropRef.current // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
     div.addEventListener('dragenter', this.handleDragIn)
     div.addEventListener('dragleave', this.handleDragOut)
     div.addEventListener('dragover', this.handleDrag)
@@ -78,7 +80,7 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
   }
 
   componentWillUnmount() {
-    let div = this.dropRef.current
+    let div:any = this.dropRef.current // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
     div.removeEventListener('dragenter', this.handleDragIn)
     div.removeEventListener('dragleave', this.handleDragOut)
     div.removeEventListener('dragover', this.handleDrag)
@@ -173,7 +175,7 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
           </form>
           <div
             style={{display: 'inline-block', position: 'relative'}}
-            ref={this.dropRef}>
+            ref={this.dropRef} >
                {this.state.dragging &&
                 <div 
                   style={{
