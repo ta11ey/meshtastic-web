@@ -5,8 +5,6 @@ import DeviceFile from "./DeviceFile";
 
 class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
 
-  dragCounter;
-
   constructor(props) {
     super(props);
     this.state ={
@@ -44,7 +42,6 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
     e.preventDefault()
     e.stopPropagation()
     console.log("in")
-    this.dragCounter++
     if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
       this.setState({drag: true})
     }
@@ -54,10 +51,7 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
     e.preventDefault()
     e.stopPropagation()
     console.log("out")
-    this.dragCounter--
-    if (this.dragCounter === 0) {
-      this.setState({drag: false})
-    }
+    this.setState({drag: false})
   }
 
   handleDrop = (e) => {
@@ -67,8 +61,6 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       console.log(e.dataTransfer.files);
       this.fileUpload(e.dataTransfer.files[0])
-      e.dataTransfer.clearData()
-      this.dragCounter = 0    
     }
   }
 
@@ -116,7 +108,7 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
     this.setState({file:e.target.files[0]})
   }
 
-  fileUpload(file){
+  fileUpload(file:File){
     this.setState({isUploading: true})
     const formData = new FormData();
     formData.append('file',file)
@@ -171,47 +163,28 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
     if (this.state.isUploading) {
       return (
         <div className="DeviceFiles">
-          Upload in progress
+          <div className="FileActionMessage">
+            Upload in progress
+          </div>
+        </div>
+      );
+    }
+    else if (this.state.drag) {
+      return (
+        <div className="DeviceFiles">
+          <div className="FileActionMessage">
+            Drop files to upload
+          </div>
         </div>
       );
     }
     else {
       return (
-        <div className="DeviceFiles">
+        <div className="DeviceFiles" ref={this.dropRef}>
           <form onSubmit={this.onFormSubmit}>
             <input type="file" onChange={this.onChange} />
-            <button type="submit">Upload File</button> 
-            <div
-            style={{display: 'inline-block', position: 'relative'}}
-            ref={this.dropRef} >
-               {this.state.dragging &&
-                <div 
-                  style={{
-                    border: 'dashed grey 4px',
-                    backgroundColor: 'rgba(255,255,255,.8)',
-                    top: 0,
-                    bottom: 0,
-                    left: 0, 
-                    right: 0,
-                    zIndex: 9999
-                  }}
-                >
-                  <div 
-                    style={{
-                      top: '50%',
-                      right: 0,
-                      left: 0,
-                      textAlign: 'center',
-                      color: 'grey',
-                      fontSize: 36
-                    }}
-                  >
-                    <div>drop here :)</div>
-                  </div>
-                </div>
-              }
-              {this.props.children}
-            </div>          
+            <button type="submit">Upload File</button>
+            <p>Drop files here to upload</p>      
           </form>
           <div className="FileBrowser">
             {this.state.files.map((value, index) => (
