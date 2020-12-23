@@ -180,15 +180,8 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
         <div className="DeviceFiles">
           <form onSubmit={this.onFormSubmit}>
             <input type="file" onChange={this.onChange} />
-            <button type="submit">Upload File</button>
-            <div className="FileBrowser">
-              {this.state.files.map((value, index) => (
-                <DeviceFile name={value.name} size={value.size}  delete={this.deleteFile}/>
-              ))}
-            </div>
-            
-          </form>
-          <div
+            <button type="submit">Upload File</button> 
+            <div
             style={{display: 'inline-block', position: 'relative'}}
             ref={this.dropRef} >
                {this.state.dragging &&
@@ -218,7 +211,14 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
                 </div>
               }
               {this.props.children}
-            </div>
+            </div>          
+          </form>
+          <div className="FileBrowser">
+            {this.state.files.map((value, index) => (
+              <DeviceFile name={value.name} size={value.size}  delete={this.deleteFile}/>
+            ))}
+          </div>
+          
             {this.filesystemUtilizationBar()}
         </div>
       );

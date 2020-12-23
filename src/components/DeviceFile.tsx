@@ -7,7 +7,7 @@ class DeviceFile extends Component<DeviceFileProps,any> { // TODO: Properly defi
    
     return (
       <div className="DeviceFile">
-        <div>{this.props.name}</div>
+        <div><a href={this.props.name}>{this.props.name}</a></div>
         <div>{this.props.size}</div>
         <div> 
           <button onClick={
