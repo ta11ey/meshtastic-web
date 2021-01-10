@@ -225,6 +225,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       return (
         <Messages
           messages={this.state.messages}
+          users={this.state.users}
           SendMessage={this.SendMessage}
           OurNodeId={this.state.myInfo.myNodeNum}
         />

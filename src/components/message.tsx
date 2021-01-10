@@ -12,6 +12,21 @@ class Message extends Component<any,any> { // TODO: Properly define / enforce Ty
     return new TextDecoder().decode(this.props.message.decoded.data.payload as Uint8Array);
   }
 
+  translateNodeIDToFriendlyName(nodeId) { 
+    const EVERYONE_INT32_MAX = 4294967295; // avoid magic nubmers; define it here, use it later
+    // TODO: this should probably be some kind of globally acessible
+    // static class?  We might need this outside of a single message
+    if (nodeId == EVERYONE_INT32_MAX) {
+      return "Everyone";
+    }
+    else if (this.props.users.hasOwnProperty(nodeId)){
+      if (this.props.users[nodeId].longName && this.props.users[nodeId].longName.length >0 ){
+        return this.props.users[nodeId].longName
+      }
+    }
+    return nodeId
+  }
+
   render() {
     console.log("Rendering message");
     console.log(this.props.message);
@@ -27,7 +42,7 @@ class Message extends Component<any,any> { // TODO: Properly define / enforce Ty
         }}
       >
         <div className="MessageHead">
-          From: {this.props.message.from} || To: {this.props.message.to}
+          From: {this.translateNodeIDToFriendlyName(this.props.message.from) } || To: {this.translateNodeIDToFriendlyName(this.props.message.to) }
         </div>
         <div
           className="MessageBody"
