@@ -33,7 +33,7 @@ class Messages extends Component<any,any> { // TODO: Properly define / enforce T
         <div className="MessageHistory">
           Messages:
           {this.props.messages.map((value, index) => (
-            <Message message={value} />
+            <Message message={value} OurNodeId={this.props.OurNodeId}  />
           ))}
         </div>
         <div className="NewMessage">

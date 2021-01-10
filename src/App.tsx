@@ -16,6 +16,7 @@ import Users from './components/users';
 import * as Favicon from "../node_modules/react-favicon/dist/react-favicon";
 import DeviceSettings from './components/DeviceSettings';
 import DeviceFiles from './components/DeviceFiles';
+import { MeshPacket, PortNumEnum} from "../node_modules/@meshtastic/meshtasticjs/dist/protobuf";
 
 class App extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
   httpconn;
@@ -143,7 +144,6 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
     });
 
     this.httpconn.onFromRadioEvent.subscribe((event) => {
-      console.log("Radio: " + JSON.stringify(event));
       this.addToPacketArray(event);
       const now = new Date();
       this.SetRadioStatus({
@@ -151,9 +151,18 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       });
     }, this.SubOptions);
 
-    this.httpconn.onDataPacketEvent.subscribe((event,) => {
-      console.log("Data: " + JSON.stringify(event));
-      this.addToMessageArray(event);
+    this.httpconn.onDataPacketEvent.subscribe((meshPacket: MeshPacket) => {
+      console.log("Data: " + JSON.stringify(meshPacket));
+      console.log("AppData: ", meshPacket.decoded.data.GetAppDataMessage());
+      if (meshPacket.decoded.data.portnum == PortNumEnum.TEXT_MESSAGE_APP) {
+        this.addToMessageArray(meshPacket);
+      }
+      if (meshPacket.decoded.data.portnum == PortNumEnum.NODEINFO_APP) {
+        //this.UpdateUserList(meshPacket);
+      }
+      else if (meshPacket.decoded.data.portnum == PortNumEnum.POSITION_APP) {
+        //this.UpdateUserList(meshPacket);
+      }
     }, this.SubOptions);
 
     this.httpconn.onUserPacketEvent.subscribe((event) => {
@@ -202,6 +211,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
         <Messages
           messages={this.state.messages}
           SendMessage={this.SendMessage}
+          OurNodeId={this.state.myInfo.myNodeNum}
         />
       );
     } else if (this.state.currentView === "packet_log") {

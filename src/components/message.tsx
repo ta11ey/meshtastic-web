@@ -5,16 +5,11 @@ import { PortNumEnum } from "../../node_modules/@meshtastic/meshtasticjs/dist/pr
 
 class Message extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
   sentByUs() {
-    return this.props.message.from == "476493745";
+    return this.props.message.from == this.props.OurNodeId;
   }
 
   messageBody() {
-
-    if (this.props.message.decoded.data.portnum == PortNumEnum.TEXT_MESSAGE_APP) {
-      return this.props.message.decoded.data.payload;
-    } else {
-      return "Binary data";
-    }
+    return new TextDecoder().decode(this.props.message.decoded.data.payload as Uint8Array);
   }
 
   render() {
