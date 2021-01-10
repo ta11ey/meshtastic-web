@@ -16,7 +16,7 @@ import Users from './components/users';
 import * as Favicon from "../node_modules/react-favicon/dist/react-favicon";
 import DeviceSettings from './components/DeviceSettings';
 import DeviceFiles from './components/DeviceFiles';
-import { MeshPacket, PortNumEnum, User} from "../node_modules/@meshtastic/meshtasticjs/dist/protobuf";
+import { MeshPacket, PortNumEnum, User, Position} from "../node_modules/@meshtastic/meshtasticjs/dist/protobuf";
 import { MeshNode } from "./types/MeshNode";
 
 class App extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
@@ -35,7 +35,8 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
     this.SetHTTPStatus = this.SetHTTPStatus.bind(this);
     this.SetRadioStatus = this.SetRadioStatus.bind(this);
     this.SetConnectionStatus = this.SetConnectionStatus.bind(this);
-    this.UpdateUserList = this.UpdateUserList.bind(this);
+    this.HandleNodeInfoAppPacket = this.HandleNodeInfoAppPacket.bind(this);
+    this.HandleNodeInfoAppPacket = this.HandleNodeInfoAppPacket.bind(this);
 
     const now = new Date();
     this.state = {
@@ -103,7 +104,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       radioIsConnected: status,
     });
   }
-  UpdateUserList(UserPacket: MeshPacket) {
+  HandleNodeInfoAppPacket(UserPacket: MeshPacket) {
     const NodeInfo = User.decode(UserPacket.decoded.data.payload as Uint8Array);
     var rxTime = new Date(0); // The 0 there is the key, which sets the date to the epoch
     rxTime.setUTCSeconds(UserPacket.rxTime);
@@ -115,12 +116,31 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       lastSeen: rxTime,
       rxSnr: UserPacket.rxSnr
     }
+    this.MergeNewUserDTOWithState(newUserDTO);
+  }
 
-    console.log("New User: ", newUserDTO);
+  HandlePositionInfoAppPacket(PositionPacket: MeshPacket) {
+    const PositionInfo = Position.decode(PositionPacket.decoded.data.payload as Uint8Array);
+    var rxTime = new Date(0); // The 0 there is the key, which sets the date to the epoch
+    rxTime.setUTCSeconds(PositionPacket.rxTime);
+    const newUserDTO: MeshNode = {
+      nodeNumber: PositionPacket.from,
+      lastSeen: rxTime,
+      rxSnr: PositionPacket.rxSnr,
+      position: PositionInfo
+    }
+    this.MergeNewUserDTOWithState(newUserDTO);
+   
+  }
 
+  MergeNewUserDTOWithState(newUserDTO : MeshNode) {
+    console.log("New UserDTO : ", newUserDTO);
+    var mergedUserDTO = newUserDTO;
+    if (newUserDTO.nodeNumber in this.state.users) {
+      mergedUserDTO = Object.assign(mergedUserDTO,this.state.users[newUserDTO.nodeNumber])
+    }
     const newUsers = this.state.users;
-    newUsers[newUserDTO.nodeNumber] = newUserDTO
-
+    newUsers[newUserDTO.nodeNumber] = mergedUserDTO
     this.setState({
       users: newUsers
     });
@@ -169,27 +189,11 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
         this.addToMessageArray(meshPacket);
       }
       if (meshPacket.decoded.data.portnum == PortNumEnum.NODEINFO_APP) {
-        this.UpdateUserList(meshPacket);
+        this.HandleNodeInfoAppPacket(meshPacket);
       }
       else if (meshPacket.decoded.data.portnum == PortNumEnum.POSITION_APP) {
-        //this.UpdateUserList(meshPacket);
+        this.HandlePositionInfoAppPacket(meshPacket);
       }
-    }, this.SubOptions);
-
-    this.httpconn.onUserPacketEvent.subscribe((event) => {
-      console.log("User: " + JSON.stringify(event));
-      this.addToPacketArray(event);
-      this.UpdateUserList(event);
-    }, this.SubOptions);
-
-    this.httpconn.onPositionPacketEvent.subscribe((event) => {
-      console.log("Position: " + JSON.stringify(event));
-      this.addToPacketArray(event);
-    }, this.SubOptions);
-
-    this.httpconn.onNodeListChangedEvent.subscribe((event) => {
-      console.log("NodeList: " + JSON.stringify(event));
-      this.addToPacketArray(event);
     }, this.SubOptions);
 
     this.httpconn.onConfigDoneEvent.subscribe((event) => {
