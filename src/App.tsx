@@ -37,7 +37,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
     this.SetConnectionStatus = this.SetConnectionStatus.bind(this);
     this.HandleNodeInfoAppPacket = this.HandleNodeInfoAppPacket.bind(this);
     this.HandleNodeInfoAppPacket = this.HandleNodeInfoAppPacket.bind(this);
-
+    this.MergeNewUserDTOWithState = this.MergeNewUserDTOWithState.bind(this);
     const now = new Date();
     this.state = {
       messages: [],
@@ -134,13 +134,13 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
   }
 
   MergeNewUserDTOWithState(newUserDTO : MeshNode) {
-    console.log("New UserDTO : ", newUserDTO);
-    var mergedUserDTO = newUserDTO;
-    if (newUserDTO.nodeNumber in this.state.users) {
-      mergedUserDTO = Object.assign(mergedUserDTO,this.state.users[newUserDTO.nodeNumber])
+    
+    if (this.state.users.hasOwnProperty(newUserDTO.nodeNumber)) {
+      newUserDTO = Object.assign(this.state.users[newUserDTO.nodeNumber],newUserDTO);
+      console.log("updating user", newUserDTO);
     }
-    const newUsers = this.state.users;
-    newUsers[newUserDTO.nodeNumber] = mergedUserDTO
+    var newUsers = this.state.users;
+    newUsers[newUserDTO.nodeNumber] = newUserDTO
     this.setState({
       users: newUsers
     });
