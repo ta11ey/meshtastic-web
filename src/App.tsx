@@ -185,25 +185,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
 
     this.httpconn
       .connect(deviceIp, sslActive, false, false, 'balanced', 5000)
-      .then((result) => {
-        if (false) {
-          console.log("Setting configs");
-          this.httpconn.setRadioConfig({
-            preferences: {
-              sendOwnerInterval: 10,
-              positionBroadcastSecs: 10,
-              waitBluetoothSecs: 86400,
-              screenOnSecs: 10,
-              minWakeSecs: 1000000
-            }
-          });
-          this.httpconn.setOwner({
-            id: "1",
-            longName: "charles",
-            shortName: "cc"
-          })
-        }
-      })
+      .then((result) => { console.log("Connected")})
       .catch((error) => {
         this.httpconn.isConnected = false;
         //this.setState({
