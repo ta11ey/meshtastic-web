@@ -6,12 +6,17 @@ class PacketLog extends Component<any,any> { // TODO: Properly define / enforce 
   // TODO: This shouldn't be necessary
   // but for some reason, packets from meshtastic.js throw
   // an exception when stringifying them
-  PacketToString(value) { 
+  RawPacketToString(value) {
     try {
-      return JSON.stringify(value);
+      return JSON.stringify(value.packet)
     }
     catch(error) {
       return "Couldn't render packet";
+    }
+  }
+  AppPacketToString(value){ 
+    if (value.packet && value.packet.decoded) {
+      return JSON.stringify(value.packet.decoded.data.GetAppDataMessage());
     }
   }
   render() {
@@ -25,7 +30,8 @@ class PacketLog extends Component<any,any> { // TODO: Properly define / enforce 
               marginTop: 10,
               border: "1px solid black"
             }}>
-              {this.PacketToString(value)}
+              Raw Packet: {this.RawPacketToString(value)}<br/>
+              Plugin Packet: {this.AppPacketToString(value)}
               <br />
             </div>
           ))}
