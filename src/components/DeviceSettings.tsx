@@ -8,6 +8,7 @@ class DeviceSettings extends Component<any,any> { // TODO: Properly define / enf
     super(props);
     this.handlePreferenceChange = this.handlePreferenceChange.bind(this);
     this.writeToRadio = this.writeToRadio.bind(this);
+    this.handleChannelChange = this.handleChannelChange.bind(this);
     this.state = {
       radioConfig: {},
       myInfo: {},
@@ -39,6 +40,21 @@ class DeviceSettings extends Component<any,any> { // TODO: Properly define / enf
     });
   }
 
+  handleChannelChange(event) {
+    console.log(event);
+    const newChannel = this.state.radioConfig.channelSettings;
+    newChannel[event.target.name] = event.target.value
+    console.log(newChannel);
+
+    const newRadioConfig = this.state.radioConfig;
+    newRadioConfig.channelSettings = newChannel
+    this.setState({
+      radioConfig: newRadioConfig,
+      isDirty: true
+    });
+    
+  }
+
   writeToRadio() {
     console.log("setting radio configs: ", this.state.radioConfig)
     this.props.httpconn.setRadioConfig(this.state.radioConfig);
@@ -61,9 +77,13 @@ class DeviceSettings extends Component<any,any> { // TODO: Properly define / enf
 
   render() {
 
-    const proto = Object.getPrototypeOf(this.state.radioConfig.preferences)
-    const availableUserPreferences =  Object.getOwnPropertyNames(proto).filter(name => typeof this.state.radioConfig.preferences[name] !== 'function' &&  name !== '$type').sort();
-   
+    const preferencesProto = Object.getPrototypeOf(this.state.radioConfig.preferences)
+    const availableUserPreferences =  Object.getOwnPropertyNames(preferencesProto).filter(name => typeof this.state.radioConfig.preferences[name] !== 'function' &&  name !== '$type').sort();
+
+    const channelProto = Object.getPrototypeOf(this.state.radioConfig.channelSettings)
+    const availableChannelSettings =  Object.getOwnPropertyNames(channelProto).filter(name => typeof this.state.radioConfig.preferences[name] !== 'function' &&  name !== '$type').sort();
+
+
     const prefs = availableUserPreferences.map(key => 
       <div>
         <span className="settingLabel">{key} </span>
@@ -79,10 +99,10 @@ class DeviceSettings extends Component<any,any> { // TODO: Properly define / enf
     )
 
 
-    const channelSettings = Object.keys(this.state.radioConfig.channelSettings).map(key => 
+    const channelSettings = availableChannelSettings.map(key => 
       <div>
         <span className="settingLabel">{key} </span>
-       <span className="settingValue">{this.state.radioConfig.channelSettings[key]}</span><br/>
+        <input className="settingValue" name={key} onChange={this.handleChannelChange} value={this.state.radioConfig.channelSettings[key]}/><br/>
        </div>
     )
 
