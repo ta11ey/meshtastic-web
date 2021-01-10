@@ -20,7 +20,8 @@ class Message extends Component<any,any> { // TODO: Properly define / enforce Ty
   render() {
     console.log("Rendering message");
     console.log(this.props.message);
-    let rxTime = new Date(this.props.message.rxTime);
+    var rxTime = new Date(0); // The 0 there is the key, which sets the date to the epoch
+    rxTime.setUTCSeconds(this.props.message.rxTime);
     return (
       <div
         className="Message"
