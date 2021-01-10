@@ -54,7 +54,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       users: {},
       radioConfig: {},
       myInfo: {},
-      user: {}
+      owner: {}
     };
   }
 
@@ -202,7 +202,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       this.setState({
         radioConfig: event.radioConfig,
         myInfo: event.myInfo,
-        user: event.user
+        owner: event.user
       })
     }, this.SubOptions);
 
@@ -234,7 +234,12 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
     } else if (this.state.currentView == "users_list") {
       return <Users users={this.state.users} />;
     } else if (this.state.currentView == "device_settings") {
-      return <DeviceSettings radioConfig={this.state.radioConfig} myInfo={this.state.myInfo} httpconn={this.httpconn} />;
+      return <DeviceSettings 
+        radioConfig={this.state.radioConfig} 
+        myInfo={this.state.myInfo} 
+        owner = {this.state.owner}
+        httpconn={this.httpconn} 
+        />;
     }
     else if (this.state.currentView == "device_files") {
       return <DeviceFiles />
@@ -253,7 +258,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
 
 
   render() {
-    if (this.state.user) {
+    if (this.state.owner) {
       return (
         <div className="App">
           <Favicon url={this.GetFavicon()} alertCount={this.state.messages.length} />
@@ -262,7 +267,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
           </div>
           <div className="App-Body">{this.AppBody()}</div>
           <div className="SidebarDiv">
-            <Sidebar changeView={this.changeView} currentUser={this.state.user} />
+            <Sidebar changeView={this.changeView} currentUser={this.state.owner} />
           </div>
           <div className="App-Footer">
             <HTTPStatus

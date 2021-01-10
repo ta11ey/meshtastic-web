@@ -9,9 +9,11 @@ class DeviceSettings extends Component<any,any> { // TODO: Properly define / enf
     this.handlePreferenceChange = this.handlePreferenceChange.bind(this);
     this.writeToRadio = this.writeToRadio.bind(this);
     this.handleChannelChange = this.handleChannelChange.bind(this);
+    this.handleOwnerChange = this.handleOwnerChange.bind(this);
     this.state = {
       radioConfig: {},
       myInfo: {},
+      owner: {},
       isDirty: false
     };
   }
@@ -22,7 +24,8 @@ class DeviceSettings extends Component<any,any> { // TODO: Properly define / enf
     console.log(props);
     return { 
       radioConfig: props.radioConfig,
-      myInfo: props.myInfo
+      myInfo: props.myInfo,
+      owner: props.owner
     };
   }
 
@@ -55,9 +58,22 @@ class DeviceSettings extends Component<any,any> { // TODO: Properly define / enf
     
   }
 
+  handleOwnerChange(event) {
+    console.log(event);
+    const newOwner = this.state.owner;
+    newOwner[event.target.name] = event.target.value
+    console.log(newOwner);
+
+    this.setState({
+      owner: newOwner,
+      isDirty: true
+    });
+  }
+
   writeToRadio() {
     console.log("setting radio configs: ", this.state.radioConfig)
     this.props.httpconn.setRadioConfig(this.state.radioConfig);
+    this.props.httpconn.setOwner(this.state.owner);
     console.log("done setting radio config; rebooting");
     fetch("/restart",{
       method:"POST"
@@ -105,6 +121,12 @@ class DeviceSettings extends Component<any,any> { // TODO: Properly define / enf
         <input className="settingValue" name={key} onChange={this.handleChannelChange} value={this.state.radioConfig.channelSettings[key]}/><br/>
        </div>
     )
+    const owner = Object.keys(this.state.owner).map(key =>
+      <div>
+        <span className="settingLabel">{key} </span>
+        <input className="settingValue" name={key}  onChange={this.handleOwnerChange} value={this.state.owner[key]}/><br/>
+      </div>
+    )
 
     return (
       <div className="DeviceSettings">
@@ -140,6 +162,15 @@ class DeviceSettings extends Component<any,any> { // TODO: Properly define / enf
         <span className="SectionHeader">Channel Settings</span><br/>
          { channelSettings }
         </div>
+
+        <div className="Owner">
+        <span className="SectionHeader">Owner</span><br/>
+         { owner }
+        </div>
+
+
+
+        
       </div>
     );
   }
