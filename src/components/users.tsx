@@ -1,15 +1,16 @@
 import * as React from "react";
 import { Component } from "react";
 import User from "./user";
+import "./users.css"
 
 
 class Users extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
 
   renderUsers() {
-    if (this.props.users.length > 0) {
+    if (Object.keys(this.props.users).length > 0) {
       return (
-        this.props.users.map((value, index) => (
-          <User user={value}/>
+        Object.keys(this.props.users).map((key, index) => (
+          <User user={this.props.users[key]}/>
         ))
       );
     }
@@ -21,7 +22,7 @@ class Users extends Component<any,any> { // TODO: Properly define / enforce Type
     console.log("Rendering users");
     console.log(this.props.users);
     return (
-      <div className="Users">
+      <div className="UsersContainer">
          {this.renderUsers()}
       </div>
     );

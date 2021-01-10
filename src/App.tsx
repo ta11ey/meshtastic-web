@@ -16,7 +16,8 @@ import Users from './components/users';
 import * as Favicon from "../node_modules/react-favicon/dist/react-favicon";
 import DeviceSettings from './components/DeviceSettings';
 import DeviceFiles from './components/DeviceFiles';
-import { MeshPacket, PortNumEnum} from "../node_modules/@meshtastic/meshtasticjs/dist/protobuf";
+import { MeshPacket, PortNumEnum, User} from "../node_modules/@meshtastic/meshtasticjs/dist/protobuf";
+import { MeshNode } from "./types/MeshNode";
 
 class App extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
   httpconn;
@@ -49,7 +50,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
         interaction_time: now.getTime(),
       },
       radioIsConnected: false,
-      users: [],
+      users: {},
       radioConfig: {},
       myInfo: {},
       user: {}
@@ -102,16 +103,26 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       radioIsConnected: status,
     });
   }
-  UpdateUserList(UserPacket) {
-    const newUserDTO = {
-      id: UserPacket.decoded.user.id,
-      longName: UserPacket.decoded.user.longName,
-      shortName: UserPacket.decoded.user.shortName,
-      lastSeen: UserPacket.rxtime
+  UpdateUserList(UserPacket: MeshPacket) {
+    const NodeInfo = User.decode(UserPacket.decoded.data.payload as Uint8Array);
+    var rxTime = new Date(0); // The 0 there is the key, which sets the date to the epoch
+    rxTime.setUTCSeconds(UserPacket.rxTime);
+    const newUserDTO: MeshNode = {
+      nodeNumber: UserPacket.from,
+      id: NodeInfo.id,
+      longName: NodeInfo.longName,
+      shortName: NodeInfo.shortName,
+      lastSeen: rxTime,
+      rxSnr: UserPacket.rxSnr
     }
 
+    console.log("New User: ", newUserDTO);
+
+    const newUsers = this.state.users;
+    newUsers[newUserDTO.nodeNumber] = newUserDTO
+
     this.setState({
-      users: [...this.state.users, newUserDTO]
+      users: newUsers
     });
   }
 
@@ -158,7 +169,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
         this.addToMessageArray(meshPacket);
       }
       if (meshPacket.decoded.data.portnum == PortNumEnum.NODEINFO_APP) {
-        //this.UpdateUserList(meshPacket);
+        this.UpdateUserList(meshPacket);
       }
       else if (meshPacket.decoded.data.portnum == PortNumEnum.POSITION_APP) {
         //this.UpdateUserList(meshPacket);
