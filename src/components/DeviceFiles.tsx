@@ -8,8 +8,11 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
   constructor(props) {
     super(props);
     this.state ={
-      file:null,
-      isUploading: false,
+      formFileField:null,
+      uploadQueue: null,
+      currentlyUploading: null,
+      uploadBusy: false,
+      deleting: false,
       drag: false,
       files:[],
       filesystem:{}
@@ -59,8 +62,10 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
     e.stopPropagation()
     this.setState({drag: false})
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      console.log(e.dataTransfer.files);
-      this.fileUpload(e.dataTransfer.files[0])
+      this.setState({
+        uploadQueue: e.dataTransfer.files
+      });
+      console.log("upload queue: ", e.dataTransfer.files);
     }
   }
 
@@ -100,16 +105,55 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
 
   onFormSubmit(e){
     e.preventDefault() // Stop form submit
-  
-    this.fileUpload(this.state.file)
+    this.setState({
+      uploadQueue: [this.state.formFileField]
+    });
   }
 
   onChange(e) {
-    this.setState({file:e.target.files[0]})
+    this.setState({formFileField:e.target.files[0]})
   }
+  
+  componentDidUpdate() {
+    if (this.state.uploadQueue && this.state.uploadQueue.length > 0) {
+      if (!this.state.uploadBusy) {
+        if (this.state.currentlyUploading == null ) {
+          this.setState({
+            currentlyUploading: 0
+          });
+          return;
+        }
+        this.setState({
+          uploadBusy: true
+        });
+        const fileToUpload = this.state.uploadQueue[this.state.currentlyUploading]
+
+        this.fileUpload(fileToUpload).then((response) => {
+          if (this.state.uploadQueue) {
+            if (this.state.uploadQueue.length == this.state.currentlyUploading +1 ) {
+              this.setState({
+                uploadQueue: null,
+                currentlyUploading: null
+              });
+              this.refreshSPIFFSFileTree();
+            }
+            else {
+              this.setState({
+                currentlyUploading: this.state.currentlyUploading +1,
+                uploadBusy: false
+              });
+            }
+          }
+      })
+    }
+  }
+    
+}
+  
+
+
 
   fileUpload(file:File){
-    this.setState({isUploading: true})
     const formData = new FormData();
     formData.append('file',file)
     return fetch("/upload",{
@@ -117,11 +161,6 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
       body: formData
     }).then((response)=>{
       console.log("File upload successful");
-      this.setState({
-        file:null,
-       isUploading:false
-      });
-      this.refreshSPIFFSFileTree()
     });
   }
 
@@ -159,12 +198,42 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
     })
   }
 
+  deleteAllFiles() {
+    this.setState({
+      deleting: true
+    });
+    Promise.all(this.state.files.map((file, index) => (
+      fetch("/json/spiffs/delete/static?delete="+file.name,{
+        method:"DELETE"
+      })
+    ))).then( () =>  {
+        this.refreshSPIFFSFileTree();
+        this.setState({
+          deleting: false
+        });
+      }
+    );
+  }
+
+  renderUploadQueue() {
+    var response = new Array;
+    for(var i=this.state.currentlyUploading;i<this.state.uploadQueue.length;i++){
+      response.push(this.state.uploadQueue[i].name)
+    }
+    return response.map((value) => (
+      <div>
+        {value}
+      </div>
+    ));
+  }
+
   render() {
-    if (this.state.isUploading) {
+    if (this.state.currentlyUploading) {
       return (
         <div className="DeviceFiles">
           <div className="FileActionMessage">
-            Upload in progress
+            Upload in progress: {this.state.uploadQueue[this.state.currentlyUploading].name}
+            {this.renderUploadQueue()}
           </div>
         </div>
       );
@@ -174,6 +243,15 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
         <div className="DeviceFiles">
           <div className="FileActionMessage">
             Drop files to upload
+          </div>
+        </div>
+      );
+    }
+    else if (this.state.deleting) {
+      return (
+        <div className="DeviceFiles">
+          <div className="FileActionMessage">
+            Deleting files
           </div>
         </div>
       );
@@ -190,6 +268,11 @@ class DeviceFiles extends Component<any,any> { // TODO: Properly define / enforc
             {this.state.files.map((value, index) => (
               <DeviceFile name={value.name} size={value.size}  delete={this.deleteFile}/>
             ))}
+             <button className="DeleteAllButton" onClick={
+              (event)=>{ 
+                event.preventDefault();
+                this.deleteAllFiles();
+              }}>Delete All</button>
           </div>
           
             {this.filesystemUtilizationBar()}

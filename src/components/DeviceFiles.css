@@ -54,6 +54,7 @@
   display: grid;
   grid-auto-rows: min-content;
   overflow-y: scroll;
+  position: relative;
 }
 
 .DeviceFile div {
@@ -61,4 +62,12 @@
   padding-right: 10px;
   margin-top: 5px;
   margin-bottom: 5px;
+}
+
+.DeleteAllButton {
+  position: absolute;
+  bottom: 0;
+  width: 80%;
+  height: 40px;
+  left: 14%;
 }
