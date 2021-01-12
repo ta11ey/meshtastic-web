@@ -63,16 +63,20 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
 
   componentDidMount() {
     this.setupHTTP();
+    this.updateJsonReport()
     this.interval = setInterval(() => {
-      fetch("/json/report").then((data)=> {
-        data.json().then((responseData) => 
-          this.setState({
-            report: responseData
-          })
-        )
-      })
+      this.updateJsonReport()
     }, 10000);
+  }
 
+  updateJsonReport() {
+    fetch("/json/report").then((data)=> {
+      data.json().then((responseData) => 
+        this.setState({
+          report: responseData
+        })
+      )
+    })
   }
 
   addToMessageArray(newmessage) {
