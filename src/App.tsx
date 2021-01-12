@@ -71,7 +71,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
           })
         )
       })
-    }, 1000);
+    }, 10000);
 
   }
 
