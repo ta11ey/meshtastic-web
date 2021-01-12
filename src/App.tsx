@@ -18,9 +18,11 @@ import DeviceSettings from './components/DeviceSettings';
 import DeviceFiles from './components/DeviceFiles';
 import { MeshPacket, PortNumEnum, User, Position} from "../node_modules/@meshtastic/meshtasticjs/dist/protobuf";
 import { MeshNode } from "./types/MeshNode";
+import DeviceStatus from "./components/DeviceStatus";
 
 class App extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
   httpconn;
+  interval;
 
   SubOptions = {
     name: "Meshtastic-Web"
@@ -54,12 +56,23 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       users: {},
       radioConfig: {},
       myInfo: {},
-      owner: {}
+      owner: {},
+      report: {}
     };
   }
 
   componentDidMount() {
     this.setupHTTP();
+    this.interval = setInterval(() => {
+      fetch("/json/report").then((data)=> {
+        data.json().then((responseData) => 
+          this.setState({
+            report: responseData
+          })
+        )
+      })
+    }, 1000);
+
   }
 
   addToMessageArray(newmessage) {
@@ -241,6 +254,11 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
         owner = {this.state.owner}
         httpconn={this.httpconn} 
         />;
+    }
+    else if (this.state.currentView == "device_status") {
+      return <DeviceStatus 
+        report = {this.state.report}
+      />
     }
     else if (this.state.currentView == "device_files") {
       return <DeviceFiles />
