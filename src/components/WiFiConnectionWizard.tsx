@@ -1,47 +1,51 @@
 import * as React from "react";
 import { Component } from "react";
-
+import "./WiFiConnectionWizard.css"
 
 class WiFiNetwork extends Component<any,any> {
   render() {
     return (
-      <div>
-        {JSON.stringify(this.props.Network)}
-        {JSON.stringify(this.props.CurrentlyConnected)}
+      <div className="WiFiNetwork">
+        <h4>{this.props.Network.ssid}{this.props.CurrentlyConnected ? "(Connected)":""}</h4>
+        RSSI: {this.props.Network.rssi}
       </div>
     )
   }
 }
 
 class WiFiConnectionWizard extends Component<WiFiConnectionWizardProps,WiFiConnectionWizardState> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
+  
+  interval;
+  
   constructor(props) {
     super(props);
     this.state = {
       WiFiNetworks: [],
-      Busy: false
+      Busy: true
    }
   }
  
   componentDidMount() {
-   if (this.state.WiFiNetworks?.length === 0) {
-     this.updateAvailableNetworks()
-   }
+    this.updateAvailableNetworks()
+    this.interval = setInterval(() => {
+      this.updateAvailableNetworks()
+    }, 10000);
  }
 
  updateAvailableNetworks() {
-  this.setState({
-    Busy: true
-  })
   fetch("/json/scanNetworks").then((data)=> {
-    data.json().then((responseData) => 
+    data.json().then((responseData) => {
+      let networks = this.state.WiFiNetworks;
+      responseData.data.networks.map((network,index) => {
+       networks[network.ssid] = network
+      });
       this.setState({
-        WiFiNetworks: responseData.data.networks,
+        WiFiNetworks: networks,
         Busy: false
       })
-    )
+    });
   })
   }
-
 
   render() {
     if(this.state.Busy) {
@@ -53,12 +57,12 @@ class WiFiConnectionWizard extends Component<WiFiConnectionWizardProps,WiFiConne
     }
     else {
       return (
-        <div className="DeviceStatus">
+        <div className="WiFiContainer">
           {
-            this.state.WiFiNetworks.map((network,index) => {
+            Object.keys(this.state.WiFiNetworks).map((network,index) => {
                 return <WiFiNetwork 
-                  Network={network} 
-                  CurrentlyConnected={this.props.CurrentWiFiNetworkSSID == network.ssid} />
+                  Network={this.state.WiFiNetworks[network]} 
+                  CurrentlyConnected={this.props.CurrentWiFiNetworkSSID == this.state.WiFiNetworks[network]?.ssid} />
               } 
             )
           }

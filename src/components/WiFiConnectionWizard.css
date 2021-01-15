@@ -1,0 +1,20 @@
+.WiFiContainer {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  grid-auto-rows: min-content;
+}
+
+.WiFiNetwork {
+  border: 2px solid #ffa94d;
+  border-radius: 5px;
+  background-color: #ffd8a8;
+  padding: 1em;
+  color: #d9480f;
+  margin: 10px;
+}
+
+.WiFiNetwork span {
+  display: block;
+}
