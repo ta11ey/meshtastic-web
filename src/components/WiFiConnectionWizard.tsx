@@ -16,7 +16,7 @@ class WiFiNetwork extends Component<any,any> {
 class WiFiConnectionWizard extends Component<WiFiConnectionWizardProps,WiFiConnectionWizardState> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
   
   interval;
-  
+
   constructor(props) {
     super(props);
     this.state = {
@@ -30,6 +30,10 @@ class WiFiConnectionWizard extends Component<WiFiConnectionWizardProps,WiFiConne
     this.interval = setInterval(() => {
       this.updateAvailableNetworks()
     }, 10000);
+ }
+
+ componentWillUnmount() {
+   clearInterval(this.interval);
  }
 
  updateAvailableNetworks() {
