@@ -19,6 +19,7 @@ import DeviceFiles from './components/DeviceFiles';
 import { MeshPacket, PortNumEnum, User, Position} from "../node_modules/@meshtastic/meshtasticjs/dist/protobuf";
 import { MeshNode } from "./types/MeshNode";
 import DeviceStatus from "./components/DeviceStatus";
+import WiFiConnectionWizard from "./components/WiFiConnectionWizard"
 
 class App extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
   httpconn;
@@ -267,6 +268,12 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
     else if (this.state.currentView == "device_files") {
       return <DeviceFiles />
     }
+    else if (this.state.currentView == "connect_wifi") {
+      return <WiFiConnectionWizard 
+        CurrentWiFiNetworkSSID={this.state.radioConfig.preferences.wifiSsid}
+        />
+    }
+    
   }
 
   GetFavicon() {

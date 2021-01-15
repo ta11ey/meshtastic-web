@@ -27,6 +27,7 @@ class Sidebar extends Component<any,any> { // TODO: Properly define / enforce Ty
           <a onClick={() => this.changeView("device_status") } ><li>Device Status</li></a>
           <a onClick={() => this.changeView("packet_log") } ><li>Packet Log</li></a>
           <a onClick={() => this.changeView("device_files") } ><li>Device Filesystem</li></a>
+          <a onClick={() => this.changeView("connect_wifi") } ><li>Connect To Wifi</li></a>
       </ul>
     </div>;
           
