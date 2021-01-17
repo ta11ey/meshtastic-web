@@ -13,7 +13,7 @@ class DeviceStatus extends Component<any,any> { // TODO: Properly define / enfor
           TX Airtime % <br/>
           <AirtimeChart 
           timePeriods={this.props.report.data.airtime.tx_log} 
-          periodSize={this.props.report.data.airtime.seconds_per_period} 
+          periodSize={this.props.report.data.airtime.seconds_per_period*1000} 
           width={900}
           height={200} />
         </div>
@@ -21,7 +21,7 @@ class DeviceStatus extends Component<any,any> { // TODO: Properly define / enfor
           RX Airtime % <br/>
           <AirtimeChart 
           timePeriods={this.props.report.data.airtime.rx_log} 
-          periodSize={this.props.report.data.airtime.seconds_per_period} 
+          periodSize={this.props.report.data.airtime.seconds_per_period*1000} 
           width={900}
           height={200} />
         </div>
