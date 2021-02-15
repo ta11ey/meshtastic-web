@@ -22,7 +22,7 @@ import DeviceStatus from "./components/DeviceStatus";
 import WiFiConnectionWizard from "./components/WiFiConnectionWizard"
 
 class App extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
-  httpconn;
+  connection;
   interval;
 
   SubOptions = {
@@ -99,8 +99,8 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
   }
 
   SendMessage(message, callback) {
-    if (this.httpconn.isConnected) {
-      var send = this.httpconn.sendText(message);
+    if (this.connection.isConnected) {
+      var send = this.connection.sendText(message);
     }
     callback();
   }
@@ -167,7 +167,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
   setupHTTP() {
     const client = new Client();
     SettingsManager.setDebugMode(0);
-    this.httpconn = client.createHTTPConnection();
+    this.connection = client.createHTTPConnection();
 
     // Set connection params
     let sslActive;
@@ -192,7 +192,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       this.SetHTTPStatus(event);
     });
 
-    this.httpconn.onFromRadioEvent.subscribe((event) => {
+    this.connection.onFromRadioEvent.subscribe((event) => {
       this.addToPacketArray(event);
       const now = new Date();
       this.SetRadioStatus({
@@ -200,7 +200,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       });
     }, this.SubOptions);
 
-    this.httpconn.onDataPacketEvent.subscribe((meshPacket: MeshPacket) => {
+    this.connection.onDataPacketEvent.subscribe((meshPacket: MeshPacket) => {
       console.log("Data: " + JSON.stringify(meshPacket));
       console.log("AppData: ", meshPacket.decoded.data.GetAppDataMessage());
       if (meshPacket.decoded.data.portnum == PortNumEnum.TEXT_MESSAGE_APP) {
@@ -257,7 +257,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
         radioConfig={this.state.radioConfig} 
         myInfo={this.state.myInfo} 
         owner = {this.state.owner}
-        httpconn={this.httpconn} 
+        httpconn={this.connection} 
         />;
     }
     else if (this.state.currentView == "device_status") {
