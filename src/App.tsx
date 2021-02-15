@@ -179,6 +179,22 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
     }
 
     let deviceIp = window.location.hostname + ":" + window.location.port; // Your devices IP here
+
+    this.connection.onMyNodeInfoEvent.subscribe((event) => {
+      console.log("onMyNodeInfoEvent", event);
+      this.setState({
+        myInfo: event
+      })
+    });
+
+    this.connection.onNodeInfoPacketEvent.subscribe((event) => {
+      console.log("onNodeInfoPacketEvent", event);
+      if (event.data.num == this.state.myInfo.myNodeNum) {
+        this.setState({
+          owner: event.data.user
+        });
+      }
+    });
     this.connection.onDeviceStatusEvent.subscribe((event) => {
       console.log("DeviceStatusEvent: ", event);
     }, this.SubOptions);
@@ -204,6 +220,10 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
 
     this.connection.onDataPacketEvent.subscribe((meshPacket: MeshPacket) => {
       console.log("Data: " + JSON.stringify(meshPacket));
+      if (!(meshPacket.decoded.hasOwnProperty("data"))) {
+        console.log("no data");
+        return;
+      }
       if (meshPacket.decoded.data.portnum == PortNumEnum.TEXT_MESSAGE_APP) {
         this.addToMessageArray(meshPacket);
       }
