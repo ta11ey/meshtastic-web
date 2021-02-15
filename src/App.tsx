@@ -5,10 +5,10 @@ import Sidebar from "./sidebar";
 import Messages from "./components/messages";
 import {
   Client,
-} from  "../node_modules/@meshtastic/meshtasticjs/dist/client";
-import {
+  Types,
+  Protobuf,
   SettingsManager,
-} from  "../node_modules/@meshtastic/meshtasticjs/dist/settingsmanager";
+} from "@meshtastic/meshtasticjs";
 import PacketLog from "./components/PacketLog";
 import SampleData from "./SampleData";
 import HTTPStatus from "./components/httpstatus";
@@ -20,6 +20,7 @@ import { MeshPacket, PortNumEnum, User, Position} from "../node_modules/@meshtas
 import { MeshNode } from "./types/MeshNode";
 import DeviceStatus from "./components/DeviceStatus";
 import WiFiConnectionWizard from "./components/WiFiConnectionWizard"
+import { DeviceStatusEnum } from "@meshtastic/meshtasticjs/dist/types";
 
 class App extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
   connection;
@@ -53,7 +54,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       radioPacketStatus: {
         interaction_time: now.getTime(),
       },
-      radioIsConnected: false,
+      connectionStatus: false,
       users: {},
       radioConfig: {},
       myInfo: {},
@@ -99,7 +100,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
   }
 
   SendMessage(message, callback) {
-    if (this.connection.isConnected) {
+    if (this.state.connectionStatus == DeviceStatusEnum.DEVICE_CONFIGURED) {
       var send = this.connection.sendText(message);
     }
     callback();
@@ -119,7 +120,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
 
   SetConnectionStatus(status) {
     this.setState({
-      radioIsConnected: status,
+      connectionStatus: status,
     });
   }
   HandleNodeInfoAppPacket(UserPacket: MeshPacket) {
@@ -178,17 +179,18 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
     }
 
     let deviceIp = window.location.hostname + ":" + window.location.port; // Your devices IP here
-    this.httpconn.onConnectedEvent.subscribe((event) => {
-      this.SetConnectionStatus(true);
-      console.log("connected To Radio");
+    this.connection.onDeviceStatusEvent.subscribe((event) => {
+      console.log("DeviceStatusEvent: ", event);
     }, this.SubOptions);
 
-    this.httpconn.onDisconnectedEvent.subscribe((event) => {
-      console.log("disconnected from Radio");
-      this.SetConnectionStatus(false);
-    }, this.SubOptions);
+    this.connection.onDeviceStatusEvent.subscribe(
+      (event) => {
+        console.log("connection status", event);
+        this.SetConnectionStatus(event);
+      }
+    );
 
-    this.httpconn.onHTTPTransactionEvent.subscribe((event) => {
+    this.connection.onDeviceTransactionEvent.subscribe((event) => {
       this.SetHTTPStatus(event);
     });
 
@@ -202,7 +204,6 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
 
     this.connection.onDataPacketEvent.subscribe((meshPacket: MeshPacket) => {
       console.log("Data: " + JSON.stringify(meshPacket));
-      console.log("AppData: ", meshPacket.decoded.data.GetAppDataMessage());
       if (meshPacket.decoded.data.portnum == PortNumEnum.TEXT_MESSAGE_APP) {
         this.addToMessageArray(meshPacket);
       }
@@ -214,28 +215,19 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       }
     }, this.SubOptions);
 
-    this.httpconn.onConfigDoneEvent.subscribe((event) => {
-
+    this.connection.onRadioConfigEvent.subscribe((event) => {
+      console.log("config: " , event);
       this.addToPacketArray(event);
       this.setState({
-        radioConfig: event.radioConfig,
-        myInfo: event.myInfo,
-        owner: event.user
+        radioConfig: {
+          channelSettings: event.channelSettings,
+          preferences: event.preferences
+        }
       })
     }, this.SubOptions);
 
 
-    this.httpconn
-      .connect(deviceIp, sslActive, false, false, 'balanced', 5000)
-      .then((result) => { console.log("Connected")})
-      .catch((error) => {
-        this.httpconn.isConnected = false;
-        //this.setState({
-        // messages: SampleData.messages
-        //})
-        console.log("Error connecting: ");
-        console.log(error);
-      });
+    this.connection.connect(deviceIp, sslActive, false, false, 'balanced', 5000);
   }
 
   AppBody() {
@@ -277,7 +269,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
   }
 
   GetFavicon() {
-    if (this.state.radioIsConnected) {
+    if (this.state.connectionStatus == DeviceStatusEnum.DEVICE_CONFIGURED) {
       return '/static/fav-con.svg'
     }
     else {
@@ -301,7 +293,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
           </div>
           <div className="App-Footer">
             <HTTPStatus
-              RadioIsConnected={this.state.radioIsConnected}
+              connectionStatus={this.state.connectionStatus}
               HTTPStatus={this.state.httpConnectionStatus}
               RadioStatus={this.state.radioPacketStatus}
             />

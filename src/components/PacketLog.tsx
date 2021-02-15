@@ -15,9 +15,9 @@ class PacketLog extends Component<any,any> { // TODO: Properly define / enforce 
     }
   }
   AppPacketToString(value){ 
-    if (value.packet && value.packet.decoded) {
-      return JSON.stringify(value.packet.decoded.data.GetAppDataMessage());
-    }
+    //if (value.packet && value.packet.decoded) {
+      //return JSON.stringify(value.packet.decoded.data.GetAppDataMessage()); // this was removed
+    //}
   }
   render() {
     console.log(this.props.packets);
