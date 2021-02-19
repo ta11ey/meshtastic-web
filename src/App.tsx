@@ -195,9 +195,6 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
         });
       }
     });
-    this.connection.onDeviceStatusEvent.subscribe((event) => {
-      console.log("DeviceStatusEvent: ", event);
-    }, this.SubOptions);
 
     this.connection.onDeviceStatusEvent.subscribe(
       (event) => {
