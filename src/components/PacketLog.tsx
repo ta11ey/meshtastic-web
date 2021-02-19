@@ -20,13 +20,12 @@ class PacketLog extends Component<any,any> { // TODO: Properly define / enforce 
     //}
   }
   render() {
-    console.log(this.props.packets);
     return (
       <div className="Messages">
         <div className="MessageHistory">
           Packets:
           {this.props.packets.map((value, index) => (
-            <div key="packet${index}" style={{
+            <div key={"packet"+index} style={{
               marginTop: 10,
               border: "1px solid black"
             }}>
