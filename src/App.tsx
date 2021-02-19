@@ -100,7 +100,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
   }
 
   SendMessage(message, callback) {
-    if (this.state.connectionStatus == DeviceStatusEnum.DEVICE_CONFIGURED) {
+    if (this.state.connectionStatus >= DeviceStatusEnum.DEVICE_CONNECTED) {
       var send = this.connection.sendText(message);
     }
     callback();
@@ -286,7 +286,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
   }
 
   GetFavicon() {
-    if (this.state.connectionStatus == DeviceStatusEnum.DEVICE_CONFIGURED) {
+    if (this.state.connectionStatus >= DeviceStatusEnum.DEVICE_CONNECTED) {
       return '/static/fav-con.svg'
     }
     else {
