@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Component } from "react";
 import "./message.css";
-import { PortNumEnum } from "../../node_modules/@meshtastic/meshtasticjs/dist/protobuf";
+import { PortNumEnum } from "@meshtastic/meshtasticjs/dist/protobufs";
 
 class Message extends Component<any,any> { // TODO: Properly define / enforce Typescript types https://github.com/meshtastic/meshtastic-web/issues/11
   sentByUs() {
@@ -12,7 +12,7 @@ class Message extends Component<any,any> { // TODO: Properly define / enforce Ty
     return new TextDecoder().decode(this.props.message.decoded.data.payload as Uint8Array);
   }
 
-  translateNodeIDToFriendlyName(nodeId) { 
+  translateNodeIDToFriendlyName(nodeId) {
     const EVERYONE_INT32_MAX = 4294967295; // avoid magic nubmers; define it here, use it later
     // TODO: this should probably be some kind of globally acessible
     // static class?  We might need this outside of a single message

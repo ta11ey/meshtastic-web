@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@babel/core": "7.12.3",
-    "@meshtastic/meshtasticjs": "^0.5.1",
+    "@meshtastic/meshtasticjs": "^0.6.1",
     "@pmmmwh/react-refresh-webpack-plugin": "0.4.3",
     "@svgr/webpack": "5.4.0",
     "@testing-library/jest-dom": "^5.11.6",

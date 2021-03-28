@@ -13,10 +13,10 @@ import PacketLog from "./components/PacketLog";
 import SampleData from "./SampleData";
 import HTTPStatus from "./components/httpstatus";
 import Users from './components/users';
-import * as Favicon from "../node_modules/react-favicon/dist/react-favicon";
+import * as Favicon from "react-favicon/dist/react-favicon";
 import DeviceSettings from './components/DeviceSettings';
 import DeviceFiles from './components/DeviceFiles';
-import { MeshPacket, PortNumEnum, User, Position} from "../node_modules/@meshtastic/meshtasticjs/dist/protobuf";
+import { MeshPacket, PortNumEnum, User, Position} from "@meshtastic/meshtasticjs/dist/protobufs";
 import { MeshNode } from "./types/MeshNode";
 import DeviceStatus from "./components/DeviceStatus";
 import WiFiConnectionWizard from "./components/WiFiConnectionWizard"
@@ -73,7 +73,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
 
   updateJsonReport() {
     fetch("/json/report").then((data)=> {
-      data.json().then((responseData) => 
+      data.json().then((responseData) =>
         this.setState({
           report: responseData
         })
@@ -124,7 +124,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
     });
   }
   HandleNodeInfoAppPacket(UserPacket: MeshPacket) {
-    const NodeInfo = User.decode(UserPacket.decoded.data.payload as Uint8Array);
+    const NodeInfo = User.decode(UserPacket.decoded.payload as Uint8Array);
     var rxTime = new Date(0); // The 0 there is the key, which sets the date to the epoch
     rxTime.setUTCSeconds(UserPacket.rxTime);
     const newUserDTO: MeshNode = {
@@ -139,7 +139,7 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
   }
 
   HandlePositionInfoAppPacket(PositionPacket: MeshPacket) {
-    const PositionInfo = Position.decode(PositionPacket.decoded.data.payload as Uint8Array);
+    const PositionInfo = Position.decode(PositionPacket.decoded.payload as Uint8Array);
     var rxTime = new Date(0); // The 0 there is the key, which sets the date to the epoch
     rxTime.setUTCSeconds(PositionPacket.rxTime);
     const newUserDTO: MeshNode = {
@@ -149,11 +149,11 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       position: PositionInfo
     }
     this.MergeNewUserDTOWithState(newUserDTO);
-   
+
   }
 
   MergeNewUserDTOWithState(newUserDTO : MeshNode) {
-    
+
     if (this.state.users.hasOwnProperty(newUserDTO.nodeNumber)) {
       newUserDTO = Object.assign(this.state.users[newUserDTO.nodeNumber],newUserDTO);
       console.log("updating user", newUserDTO);
@@ -203,9 +203,9 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       }
     );
 
-    this.connection.onDeviceTransactionEvent.subscribe((event) => {
-      this.SetHTTPStatus(event);
-    });
+    // this.connection.onDeviceTransactionEvent.subscribe((event) => {
+    //   this.SetHTTPStatus(event);
+    // });
 
     this.connection.onFromRadioEvent.subscribe((event) => {
       this.addToPacketArray(event);
@@ -215,22 +215,22 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       });
     }, this.SubOptions);
 
-    this.connection.onDataPacketEvent.subscribe((meshPacket: MeshPacket) => {
-      console.log("Data: " + JSON.stringify(meshPacket));
-      if (!(meshPacket.decoded.hasOwnProperty("data"))) {
-        console.log("no data");
-        return;
-      }
-      if (meshPacket.decoded.data.portnum == PortNumEnum.TEXT_MESSAGE_APP) {
-        this.addToMessageArray(meshPacket);
-      }
-      if (meshPacket.decoded.data.portnum == PortNumEnum.NODEINFO_APP) {
-        this.HandleNodeInfoAppPacket(meshPacket);
-      }
-      else if (meshPacket.decoded.data.portnum == PortNumEnum.POSITION_APP) {
-        this.HandlePositionInfoAppPacket(meshPacket);
-      }
-    }, this.SubOptions);
+    // this.connection.onDataPacketEvent.subscribe((meshPacket: MeshPacket) => {
+    //   console.log("Data: " + JSON.stringify(meshPacket));
+    //   if (!(meshPacket.decoded.hasOwnProperty("data"))) {
+    //     console.log("no data");
+    //     return;
+    //   }
+    //   if (meshPacket.decoded.portnum == PortNumEnum.TEXT_MESSAGE_APP) {
+    //     this.addToMessageArray(meshPacket);
+    //   }
+    //   if (meshPacket.decoded.portnum == PortNumEnum.NODEINFO_APP) {
+    //     this.HandleNodeInfoAppPacket(meshPacket);
+    //   }
+    //   else if (meshPacket.decoded.portnum == PortNumEnum.POSITION_APP) {
+    //     this.HandlePositionInfoAppPacket(meshPacket);
+    //   }
+    // }, this.SubOptions);
 
     this.connection.onRadioConfigEvent.subscribe((event) => {
       console.log("config: " , event);
@@ -262,15 +262,15 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
     } else if (this.state.currentView == "users_list") {
       return <Users users={this.state.users} />;
     } else if (this.state.currentView == "device_settings") {
-      return <DeviceSettings 
-        radioConfig={this.state.radioConfig} 
-        myInfo={this.state.myInfo} 
+      return <DeviceSettings
+        radioConfig={this.state.radioConfig}
+        myInfo={this.state.myInfo}
         owner = {this.state.owner}
-        httpconn={this.connection} 
+        httpconn={this.connection}
         />;
     }
     else if (this.state.currentView == "device_status") {
-      return <DeviceStatus 
+      return <DeviceStatus
         report = {this.state.report}
       />
     }
@@ -278,11 +278,11 @@ class App extends Component<any,any> { // TODO: Properly define / enforce Typesc
       return <DeviceFiles />
     }
     else if (this.state.currentView == "connect_wifi") {
-      return <WiFiConnectionWizard 
+      return <WiFiConnectionWizard
         CurrentWiFiNetworkSSID={this.state.radioConfig.preferences.wifiSsid}
         />
     }
-    
+
   }
 
   GetFavicon() {

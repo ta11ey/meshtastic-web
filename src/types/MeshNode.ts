@@ -1,4 +1,4 @@
-import {Position} from "../../node_modules/@meshtastic/meshtasticjs/dist/protobuf";
+import {Position} from "@meshtastic/meshtasticjs/dist/protobufs";
 
 export class MeshNode {
   nodeNumber: number

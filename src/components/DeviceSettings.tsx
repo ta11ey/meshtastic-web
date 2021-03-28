@@ -11,7 +11,9 @@ class DeviceSettings extends Component<any,any> { // TODO: Properly define / enf
     this.handleChannelChange = this.handleChannelChange.bind(this);
     this.handleOwnerChange = this.handleOwnerChange.bind(this);
     this.state = {
-      radioConfig: {},
+      radioConfig: {
+        preferences: {}
+      },
       myInfo: {},
       owner: {},
       isDirty: false
@@ -22,7 +24,7 @@ class DeviceSettings extends Component<any,any> { // TODO: Properly define / enf
     // This will erase any local state updates!
     // Do not do this.
     console.log(props);
-    return { 
+    return {
       radioConfig: props.radioConfig,
       myInfo: props.myInfo,
       owner: props.owner
@@ -55,7 +57,7 @@ class DeviceSettings extends Component<any,any> { // TODO: Properly define / enf
       radioConfig: newRadioConfig,
       isDirty: true
     });
-    
+
   }
 
   handleOwnerChange(event) {
@@ -102,14 +104,14 @@ class DeviceSettings extends Component<any,any> { // TODO: Properly define / enf
     const availableChannelSettings =  Object.getOwnPropertyNames(channelProto).filter(name => typeof this.state.radioConfig.preferences[name] !== 'function' &&  name !== '$type').sort();
 
 
-    const prefs = availableUserPreferences.map(key => 
+    const prefs = availableUserPreferences.map(key =>
       <div>
         <span className="settingLabel">{key} </span>
         <input className="settingValue" name={key} onChange={this.handlePreferenceChange} value={this.state.radioConfig.preferences[key]} /><br/>
        </div>
     )
 
-    const myInfo = Object.keys(this.state.myInfo).map(key => 
+    const myInfo = Object.keys(this.state.myInfo).map(key =>
       <div>
         <span className="settingLabel">{key} </span>
         <span className="settingValue">{this.state.myInfo[key]}</span><br/>
@@ -117,7 +119,7 @@ class DeviceSettings extends Component<any,any> { // TODO: Properly define / enf
     )
 
 
-    const channelSettings = availableChannelSettings.map(key => 
+    const channelSettings = availableChannelSettings.map(key =>
       <div>
         <span className="settingLabel">{key} </span>
         <input className="settingValue" name={key} onChange={this.handleChannelChange} value={this.state.radioConfig.channelSettings[key]}/><br/>
@@ -141,25 +143,25 @@ class DeviceSettings extends Component<any,any> { // TODO: Properly define / enf
           <button onClick={()=>{ fetch("/restart",{
               method:"POST"
             }); }} >Restart</button>
-          <button onClick={()=>{ 
+          <button onClick={()=>{
             var formData = new FormData();
             formData.append("blink_target", "LED");
             fetch("/json/blink?blink_target=LED",{
               method:"POST"
             }); }} >Blink LED</button>
-          <button onClick={()=>{ 
+          <button onClick={()=>{
             var formData = new FormData();
             formData.append("blink_target", "SCREEN");
             fetch("/json/blink?blink_target=SCREEN",{
               method:"POST"
             }); }} >Blink Screen</button>
-          {this.unsavedChanges()}          
+          {this.unsavedChanges()}
         </div>
         <div className="UserPreferences">
         <span className="SectionHeader">User Preferences</span><br/>
           {prefs}
         </div>
-        
+
         <div className="ChannelSettings">
         <span className="SectionHeader">Channel Settings</span><br/>
          { channelSettings }
@@ -172,7 +174,7 @@ class DeviceSettings extends Component<any,any> { // TODO: Properly define / enf
 
 
 
-        
+
       </div>
     );
   }
